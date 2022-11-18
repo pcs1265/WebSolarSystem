@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://pixijs.download/v6.4.2/pixi.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+  <link rel="icon" href="./img/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Floating Oil</title>
+</head>
+
+<script src="./js/app.js"></script>
+<script src="./js/background.js"></script>
+<script src="./js/celestialBodies.js"></script>
+<script src="./js/body.js"></script>
+<script src="./js/particle.js"></script>
+<script src="./js/pointer.js"></script>
+<script src="./js/visual.js"></script>
+<script src="./js/index.js"></script>
+
+<script>
+  WebFont.load({
+    google: {
+      families: ['Noto Sans']
+    }
+  });
+</script>
+
+<body>
+  
+  <div id="container">
+  </div>
+  
+  <span id="title"> WebSolarSystem </span>
+
+  <details id="settings">
+      <summary id="control_title" onclick="toggleSettingMenu();">Settings</summary>
+
+      <div id="settings_panel">
+        <p class="option_title"> <label for="toggle_filters">Filters : </label> <input type="checkbox" class="check_box" id="toggle_filters" onclick="toggleFilters();" checked></p>
+
+        <p class="option_title"> Bowl Size : <span id="bowl_size"></span> </p>
+        <input type="range" class="sliders" id="bowl_size_slider" min="0.5" max="1.5" step="0.05" oninput="bowlSizeChanged(value);">
+      
+        <p class="option_title"> Oil Ratio : <span id="oil_ratio"></span> </p>
+        <input type="range" class="sliders" id="oil_ratio_slider" min="0" max="1" step="0.05" oninput="oilRatioChanged(value);">
+        
+        <p class="option_title"> Viscosity : <span id="viscosity"></span> </p>
+        <input type="range" class="sliders" id="viscosity_slider" min="0" max="1" step="0.05" oninput="viscosityChanged(value);">
+        
+        <input type="button" class="apply_button" value="Apply Changes" onclick="applyChanges();">
+        <input type="button" class="set_to_defaults_button" value="Set to Defaults" onclick="setToDefaults();">
+        
+        <p class="particle_counter"># of Particles : <span id="particle_indicator"></span></p> 
+        <p class="fps_counter">FPS : <span id="fps_indicator"></span></p> 
+      </div>
+      
+  </details>
+
+</body>
+
+
+</html>

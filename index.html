@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="./lib/pixi.min.js"></script>
@@ -26,6 +26,10 @@
 
 <body>
   
+  <div id = "splash">
+    <p>WebSolarSystem</p>
+  </div>
+
   <div id="container">
   </div>
   
@@ -34,12 +38,27 @@
   <details id="settings">
       <summary id="control_title">Settings</summary>
 
+      
+
       <div id="settings_panel">
         <p class="particle_counter"># of Particles : <span id="particle_indicator"></span></p> 
         <p class="fps_counter">FPS : <span id="fps_indicator"></span></p> 
       </div>
       
   </details>
+  
+    <div id="modal">
+      <div class="header">
+        <p id = "name"> 천체 이름 </p>
+        <p> 천체 간단 설명 </p>
+        <a id="openbtn" class="btn js-click-modal">Toggle Modal</a>
+      </div>
+
+      <div class="body">
+        <p>And here is all its contents.</p>
+      </div>
+    </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker

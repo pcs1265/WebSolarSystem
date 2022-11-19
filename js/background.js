@@ -129,7 +129,6 @@ export function zoom(scale){
         for(let i = 0; i < particles.length; i++){
             particles[i].zoom(zoomScale);
         }
-        console.log('z');
     }else{
         zoomIntervalCounter++;
     }

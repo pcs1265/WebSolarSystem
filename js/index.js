@@ -35,33 +35,61 @@ cb.setup(viewport);
 console.log("alive");
 
 let sun = cb.addBody({
+    name: 'SUN',
     parent: null,
     texture: PIXI.Texture.from('./img/bodies/sun.png'),
     scale: 0.1,
-    orbitRadius: 0,
     focusScale: 2,
     incAngle: 0,
     initialAngle: 0,
+
+    majorAxis: 0,
+    orbitRot: 0,
+    eccentricity : 0,
+    orbitalPeriod : 0,
 });
 
 let earth = cb.addBody({
+    name: 'EARTH',
     parent: sun,
-    texture: PIXI.Texture.from('./img/bodies/earth.png'),
-    scale: 0.1,
-    orbitRadius: 200,
-    focusScale: 4,
+    texture: PIXI.Texture.from('./img/bodies/mars.png'),
+    scale: 0.01,
+    focusScale: 10,
     incAngle: 0.013,
     initialAngle: 0,
+
+    majorAxis: 200,
+    orbitRot: 0,
+    eccentricity : 0,
+    orbitalPeriod : 365,
 });
 
 let moon = cb.addBody({
+    name: 'MOON',
     parent: earth,
-    texture: PIXI.Texture.from('./img/bodies/moon.png'),
-    scale: 0.01,
-    orbitRadius: 50,
+    texture: PIXI.Texture.from('./img/bodies/moon2.png'),
+    scale: 0.005,
     focusScale: 20,
-    incAngle: 0.17,
     initialAngle: 0,
+
+    majorAxis: 20,
+    orbitRot: 100,
+    eccentricity : 0.0167,
+    orbitalPeriod : 27,
+});
+
+let saturn = cb.addBody({
+    name: 'SATURN',
+    parent: sun,
+    texture: PIXI.Texture.from('./img/bodies/saturn.png'),
+    scale: 0.05,
+    focusScale: 10,
+    initialAngle: 0,
+
+    majorAxis: 400,
+    orbitRot: 0,
+    eccentricity : 0.0167,
+    orbitalPeriod : 10756,
 });
 
 
@@ -100,3 +128,37 @@ function resize(){
     bg.resize();
     cb.resize();
 }
+
+
+function modalup(){
+    document.getElementById('modal').classList.add('modal-open');
+    console.log('모달 팝업');
+}
+
+function modaldown(){
+    document.getElementById('modal').classList.remove('modal-open');
+    console.log('모달 사라짐');
+}
+
+let openbtn = document.getElementById('openbtn');
+
+let modalEnabled = false;
+openbtn.addEventListener('click', () => {
+    if(!modalEnabled){
+        modalup();
+        vp.modalup();
+        modalEnabled = true;
+    }else{
+        modaldown();
+        vp.modaldown();
+        modalEnabled = false;
+    }
+});
+
+
+window.addEventListener('load', () => {
+    document.getElementById('splash').classList.add('fadeOut');
+    setTimeout(()=>{
+        document.getElementById('splash').classList.add('invisible');
+    }, 1000);
+});

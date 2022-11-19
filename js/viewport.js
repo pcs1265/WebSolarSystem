@@ -6,7 +6,9 @@ let viewport;
 let focused;
 let lastTimeout = null;
 
+
 const focusAnimationTime = 1000; //포커스를 이동할 때 재생할 애니메이션의 길이
+const modalAnimationTime = 600;
 
 export function setup(app){
     viewport = new pixi_viewport.Viewport({
@@ -50,12 +52,19 @@ export function setup(app){
 
 export function setFocus(body){
     
-    window.navigator.vibrate(1);
+    
     if(body == focused){
         focused = undefined;
         viewport.plugins.remove('follow');
+        window.navigator.vibrate([2,50,1]);
     }else{
         focused = body;
+        window.navigator.vibrate(1);
+
+        if(lastTimeout){
+            clearTimeout(lastTimeout);
+            lastTimeout = null;
+        }
 
         if(lastTimeout){
             clearTimeout(lastTimeout);
@@ -77,18 +86,111 @@ export function setFocus(body){
 
         
     }
+}
 
+
+let modalEnabled = false;
+
+export function resize(){
+    if(modalEnabled){
+        viewport.resize(
+            util.width,
+            util.height / 2,
+            util.width,
+            util.height,
+        );
+    }else{
+        viewport.resize(
+            util.width,
+            util.height,
+            util.width,
+            util.height,
+        );
+    }
     
 }
 
-export function resize(){
-    viewport.resize(
-        util.width,
-        util.height,
-        util.width,
-        util.height,
-    );
+export function modalup(){
+
+    if(!focused){
+        viewport.resize(
+            util.width,
+            util.height / 2,
+            util.width,
+            util.height,
+        );
+    }else{
+        let nextPosition = focused.nextPos(modalAnimationTime);
+        nextPosition.y += util.height / (4 * focused.focusScale);
+
+        if(lastTimeout){
+            clearTimeout(lastTimeout);
+            lastTimeout = null;
+        }
+
+        //viewport.plugins.remove('follow');
+        viewport.animate({
+            time: modalAnimationTime,
+            position: nextPosition,
+            scale: focused.focusScale,
+            ease: 'easeInOutCubic',
+        });
+        
+        lastTimeout = setTimeout(()=>{
+            viewport.follow(focused.sprite);
+            viewport.resize(
+                util.width,
+                util.height / 2,
+                util.width,
+                util.height,
+            );
+        }, modalAnimationTime);
+        
+    }
+    modalEnabled = true;
+
 }
+
+export function modaldown(){
+    if(!focused){
+        viewport.resize(
+            util.width,
+            util.height,
+            util.width,
+            util.height,
+        );
+    }else{
+        let nextPosition = focused.nextPos(modalAnimationTime);
+        nextPosition.y -= util.height / (4 * focused.focusScale);
+
+        if(lastTimeout){
+            clearTimeout(lastTimeout);
+            lastTimeout = null;
+        }
+
+        //viewport.plugins.remove('follow');
+        viewport.animate({
+            time: modalAnimationTime,
+            position: nextPosition,
+            scale: focused.focusScale,
+            ease: 'easeInOutCubic',
+        });
+        
+        lastTimeout = setTimeout(()=>{
+            viewport.follow(focused.sprite);
+            viewport.resize(
+                util.width,
+                util.height,
+                util.width,
+                util.height,
+            );
+            
+        }, modalAnimationTime);
+    }
+
+    modalEnabled = false;
+}
+
 
 
 

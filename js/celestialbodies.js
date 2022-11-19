@@ -5,14 +5,30 @@ let bodies = [];
 let stage;
 let container;
 
+const referenceFPS = 75;
+const referenceFrametime = 1000 / referenceFPS;
+
+
+
+//orbitalPeriod는 일 단위
 class CelestialBody {
-    constructor(parent, texture, scale, orbitRadius, focusScale, incAngle, initialAngle){
+    constructor(options){
+        
+        this.parent = options.parent;
+        this.name = options.name;
+
+        this.a = options.majorAxis;                    //장반경
+        this.c = options.majorAxis * options.eccentricity;    //초점과 중심 사이의 거리
+        this.b = Math.sqrt(Math.pow(this.a, 2) - Math.pow(this.c, 2));    //단반경
+
         this.x;
         this.y;
         this.centerX;
         this.centerY;
-        this.focusScale = focusScale;
-        this.parent = parent;
+        this.focusScale = options.focusScale;
+
+        this.orbitRot = options.orbitRot;
+        this.orbitalPeriod = options.orbitalPeriod;
 
         if(!this.parent){
             this.centerX = util.centerW;
@@ -22,10 +38,18 @@ class CelestialBody {
             this.centerY = this.parent.y;
         }
         
-        this.angle = initialAngle;
-        this.incAngle = incAngle;
-        this.orbitRadius = orbitRadius; 
-        this.scale = scale;
+        this.angle = options.initialAngle;
+        this.incAngle = 0;
+        this.majorAxis = options.majorAxis; 
+        this.scale = options.scale;
+        
+        let p = this.orbitRot * Math.PI / 180;
+
+        this.focusX = Math.sqrt(this.a*this.a - this.b*this.b) * Math.cos(p) * util.screenMag;
+        this.focusY = Math.sqrt(this.a*this.a - this.b*this.b) * Math.sin(p) * util.screenMag;
+
+        this.graphicX = Math.sqrt(this.a*this.a - this.b*this.b) * util.screenMag;
+        this.graphicY = 0;
 
         this.orbitGraphic = new PIXI.Graphics();
         this.orbitGraphic.lineStyle({
@@ -33,37 +57,45 @@ class CelestialBody {
             alpha: 0.5,
             width: 0.5,
         });
-        this.orbitGraphic.drawCircle(0, 0, orbitRadius);
+        this.orbitGraphic.drawEllipse(this.graphicX, this.graphicY, this.a, this.b);
         this.orbitGraphic.scale.set(util.screenMag);
+        this.orbitGraphic.angle = options.orbitRot;
 
         this.animate();
 
-
-        this.sprite = new PIXI.Sprite(texture);
+        this.sprite = new PIXI.Sprite(options.texture);
         this.sprite.scale.set(this.scale * util.screenMag);
         this.sprite.anchor.set(0.5);
         this.sprite.x = this.x;
         this.sprite.y = this.y;
 
-        
-        console.log(texture.resolution);
         this.sprite.interactive = true;
         this.sprite.on('click', (event) => { vp.setFocus(this);});
         this.sprite.on('tap', (event) => { vp.setFocus(this);});
     }
 
     animate(){
-        let rad = this.angle * Math.PI / 180;
+        let t = this.angle * Math.PI / 180;
+        let p = this.orbitRot * Math.PI / 180;
+        
         if(!this.parent){
             this.centerX = util.centerW;
             this.centerY = util.centerH;
         }else{
             this.centerX = this.parent.x;
             this.centerY = this.parent.y;
+            this.incAngle =  (360 / this.orbitalPeriod)  * (referenceFPS / Math.pow(util.currentFPS, 2));
         }
-        this.x = Math.cos(rad) * this.orbitRadius * util.screenMag + this.centerX;
-        this.y = Math.sin(rad) * this.orbitRadius * util.screenMag + this.centerY;
-        this.angle += this.incAngle;
+
+        this.x = (this.a * Math.cos(t) * Math.cos(p) - this.b * Math.sin(t) * Math.sin(p) + this.focusX) * util.screenMag + this.centerX;
+        this.y = (this.a * Math.cos(t) * Math.sin(p) + this.b * Math.sin(t) * Math.cos(p) + this.focusY) * util.screenMag + this.centerY;
+
+        if(this.incAngle == Infinity){
+        }else{
+            this.angle += this.incAngle;
+        }
+        
+
         if(this.angle > 360){
             this.angle -= 360;
         }
@@ -73,20 +105,31 @@ class CelestialBody {
 
     nextPos(ms){
         let frames = ms / util.avgFrametime;
-        let centerX;
-        let centerY;
-        if(!this.parent){
-            centerX = util.centerW;
-            centerY = util.centerH;
-        }else{
-            let parentCenter = this.parent.nextPos(ms);
-            centerX = parentCenter.x;
-            centerY = parentCenter.y;
+        let x;
+        let y;
+        let angle = this.angle;
+        let incAngle = this.incAngle;
+        for(let i = 1; i <= frames; i++){
+            let centerX;
+            let centerY;
+            let p = this.orbitRot * Math.PI / 180;
+            
+            if(!this.parent){
+                centerX = util.centerW;
+                centerY = util.centerH;
+            }else{
+                let parentCenter = this.parent.nextPos(util.avgFrametime * i);
+                centerX = parentCenter.x;
+                centerY = parentCenter.y;
+                incAngle =  (360 / this.orbitalPeriod)  * (referenceFPS / Math.pow(util.currentFPS, 2));
+            }
+
+            let rad = (angle) * Math.PI / 180;
+            x = (this.a * Math.cos(rad) * Math.cos(p) - this.b * Math.sin(rad) * Math.sin(p) + this.focusX) * util.screenMag + centerX;
+            y = (this.a * Math.cos(rad) * Math.sin(p) + this.b * Math.sin(rad) * Math.cos(p) + this.focusY) * util.screenMag + centerY;
+
+            angle += incAngle;
         }
-        
-        let rad = (this.angle + (this.incAngle * frames)) * Math.PI / 180;
-        let x = Math.cos(rad) * this.orbitRadius * util.screenMag + centerX;
-        let y = Math.sin(rad) * this.orbitRadius * util.screenMag + centerY;
         return new PIXI.Point(x, y);
     }
 
@@ -114,7 +157,8 @@ export function setup(iStage){
 
 export function addBody(options){
     
-    let newBody = new CelestialBody(options.parent, options.texture, options.scale, options.orbitRadius, options.focusScale, options.incAngle, options.initialAngle);
+    
+    let newBody = new CelestialBody(options);
 
     bodies.push(newBody);
     

@@ -1,5 +1,5 @@
 const sCacheName ="WebSolarSystem";//캐시 이름 선언
-const aFilesToCache = ['./index.html','./manifest.json'];//캐시할 파일 선언
+const aFilesToCache = [];//캐시할 파일 선언
 
 //서비스워커 설치하고 캐시파일 저장
 self.addEventListener('install', pEvent => {

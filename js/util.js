@@ -22,8 +22,8 @@ let frametimeCounter = 0;
 let fpsIndicator = document.getElementById("fps_indicator");
 setInterval(showFPS.bind(this), 1000);
 
-export let currentFPS = 60;
-export let avgFrametime = 16;
+export let currentFPS = 0;
+export let avgFrametime = 0;
 export function frameCount(){
     frameCounter++;
     frametimeCounter += Date.now() - lastFrame;

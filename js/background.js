@@ -10,8 +10,7 @@ let stageWidth;
 let stageHeight;
 let totalParticles = 0;
 
-
-
+const pixelPerParticle = 500;
 
 class Particle {
     constructor(pos, texture){
@@ -19,10 +18,12 @@ class Particle {
         this.y = pos.y;
         this.vx = 0;
         this.vy = 0;
-        this.scale = Math.random() * 0.05 / util.DPR;
+        this.scale = Math.random() * 0.05 * util.screenMag;
+        this.zoomScale = 1;
+
 
         this.sprite = new PIXI.Sprite(texture);
-        this.sprite.scale.set(this.scale);
+        this.sprite.scale.set(this.scale *  this.zoomScale);
         this.sprite.anchor.set(0.5);
         this.sprite.x = this.x;
         this.sprite.y = this.y;
@@ -37,6 +38,10 @@ class Particle {
     setSpriteSize(size){
         this.sprite.scale.set(size);
     }
+
+    zoom(zoomScale){
+        this.sprite.scale.set(this.scale * zoomScale);
+    }
         
 }
 
@@ -48,7 +53,7 @@ export function setup(iStage){
 
     placeParticles();
 
-    container = new PIXI.ParticleContainer({autoResize : true});
+    container = new PIXI.Container({autoResize : true});
     stage.addChild(container);
 
     for(let i = 0; i < particles.length; i++){
@@ -59,7 +64,7 @@ export function setup(iStage){
     
 function placeParticles(){
     
-    const targetParticles = util.width * util.height / 1000;
+    const targetParticles = util.width * util.height / pixelPerParticle;
     
     totalParticles = 0;
     for(let i = 0; i < targetParticles; ++i){
@@ -75,7 +80,7 @@ function placeParticles(){
 }
 
 export function resize(){
-    const targetParticles = util.width * util.height / 1000;
+    const targetParticles = util.width * util.height / pixelPerParticle;
     const diffX = util.width / stageWidth;
     const diffY = util.height / stageHeight;
     stageWidth = util.width;
@@ -112,12 +117,23 @@ export function resize(){
     
 }
 
-function reset(){
-    this.container.removeChildren();
-    for(let i = 0; i < this.particles.length; i++){
-        const item = this.particles[i];
-        this.container.addChild(item.sprite);
-    } 
+const zoomInterval = 2;
+let zoomIntervalCounter = 0;
+
+export function zoom(scale){
+    //container.removeChildren();
+    if(zoomIntervalCounter >= zoomInterval){
+        zoomIntervalCounter = 0;
+        
+        let zoomScale = 1 / scale;
+        for(let i = 0; i < particles.length; i++){
+            particles[i].zoom(zoomScale);
+        }
+        console.log('z');
+    }else{
+        zoomIntervalCounter++;
+    }
+    
 }
 
 export function draw(){

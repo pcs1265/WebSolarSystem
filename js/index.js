@@ -44,8 +44,6 @@ let sun = cb.addBody({
     initialAngle: 0,
 });
 
-setTimeout(vp.setFocus(sun), 1000);
-
 let earth = cb.addBody({
     parent: sun,
     texture: PIXI.Texture.from('./img/bodies/earth.png'),
@@ -61,7 +59,7 @@ let moon = cb.addBody({
     texture: PIXI.Texture.from('./img/bodies/moon.png'),
     scale: 0.01,
     orbitRadius: 50,
-    focusScale: 10,
+    focusScale: 20,
     incAngle: 0.17,
     initialAngle: 0,
 });
@@ -91,18 +89,8 @@ function animate(){
     bg.draw();
     cb.animate();
     cb.draw();
-    frameCounter++;
+    util.frameCount();
     nextAnimation = requestAnimationFrame(animate.bind(this));
-}
-
-
-let frameCounter = 0;
-let fpsIndicator = document.getElementById("fps_indicator");
-setInterval(showFPS.bind(this), 1000);
-
-function showFPS(){
-    fpsIndicator.innerHTML = frameCounter;
-    frameCounter = 0;
 }
 
 function resize(){

@@ -1,8 +1,12 @@
 import * as util from "./util.js"
+import {zoom} from "./background.js"
 
 let viewport;
 
 let focused;
+let lastTimeout = null;
+
+const focusAnimationTime = 1000; //포커스를 이동할 때 재생할 애니메이션의 길이
 
 export function setup(app){
     viewport = new pixi_viewport.Viewport({
@@ -10,7 +14,8 @@ export function setup(app){
         screenHeight: util.height,
         worldWidth: util.width,
         worldHeight: util.height,
-        interaction: app.renderer.plugins.interaction // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
+        interaction: app.renderer.plugins.interaction, // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
+        ticker : app.ticker
     });
     app.stage.addChild(viewport);
 
@@ -31,8 +36,13 @@ export function setup(app){
 
     viewport.clampZoom({
         minScale: 1,                 // minimum scale
-        maxScale: 50,                 // minimum scale
+        maxScale: 20,                 // minimum scale
     })
+
+
+    viewport.on("zoomed", (e) => {
+        zoom(e.viewport.scaled);
+    });
 
     return viewport;
 }
@@ -40,21 +50,31 @@ export function setup(app){
 
 export function setFocus(body){
     
+    window.navigator.vibrate(1);
     if(body == focused){
         focused = undefined;
         viewport.plugins.remove('follow');
     }else{
         focused = body;
-        let pos = new PIXI.Point(body.x, body.y);
+
+        if(lastTimeout){
+            clearTimeout(lastTimeout);
+            lastTimeout = null;
+        }
+        
         viewport.plugins.remove('follow');
         viewport.animate({
-            time: 200,
-            position: pos,
-            scale: body.focusScale
+            time: focusAnimationTime,
+            position: body.nextPos(focusAnimationTime),
+            scale: body.focusScale,
+            ease: 'easeOutCubic',
         });
-        setTimeout(()=>{
+        
+        lastTimeout = setTimeout(()=>{
             viewport.follow(body.sprite);
-        }, 200);
+            window.navigator.vibrate([2,50,1]);
+        }, focusAnimationTime);
+
         
     }
 
@@ -68,12 +88,8 @@ export function resize(){
         util.width,
         util.height,
     );
-
-    viewport.screenWidth = util.width;
-    viewport.screenHeight = util.height;
-    viewport.worldWidth = util.width;
-    viewport.worldHeight = util.height;
 }
+
 
 
 

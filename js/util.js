@@ -14,3 +14,26 @@ export function resize(){
     centerH = height / 2;
     screenMag = Math.min(width, height) / 1080;
 }
+
+
+let frameCounter = 0;
+let lastFrame = Date.now();
+let frametimeCounter = 0;
+let fpsIndicator = document.getElementById("fps_indicator");
+setInterval(showFPS.bind(this), 1000);
+
+export let currentFPS = 60;
+export let avgFrametime = 16;
+export function frameCount(){
+    frameCounter++;
+    frametimeCounter += Date.now() - lastFrame;
+    avgFrametime = frametimeCounter / frameCounter;
+    lastFrame = Date.now();
+}
+
+function showFPS(){
+    fpsIndicator.innerHTML = frameCounter;
+    currentFPS = frameCounter;
+    frametimeCounter -= avgFrametime * frameCounter;
+    frameCounter = 0;
+}

@@ -2,51 +2,36 @@ import * as util from "./util.js"
 import * as vp from "./viewport.js"
 
 let bodies = [];
-let stage;
-let container;
-
-const referenceFPS = 75;
-const referenceFrametime = 1000 / referenceFPS;
-
-
+let bodyContainer;
+let orbitContainer;
 
 //orbitalPeriod는 일 단위
 class CelestialBody {
     constructor(options){
-        
         this.parent = options.parent;
         this.name = options.name;
-
-        this.a = options.majorAxis;                    //장반경
-        this.c = options.majorAxis * options.eccentricity;    //초점과 중심 사이의 거리
-        this.b = Math.sqrt(Math.pow(this.a, 2) - Math.pow(this.c, 2));    //단반경
 
         this.x;
         this.y;
         this.centerX;
         this.centerY;
-        this.focusScale = options.focusScale;
+        this.focusScale = options.focusScale;       //포커스 되었을 때 뷰포트 줌 크기
 
         this.orbitRot = options.orbitRot;
         this.orbitalPeriod = options.orbitalPeriod;
 
-        if(!this.parent){
-            this.centerX = util.centerW;
-            this.centerY = util.centerH;
-        }else{
-            this.centerX = this.parent.x;
-            this.centerY = this.parent.y;
-        }
-        
-        this.angle = options.initialAngle;
         this.incAngle = 0;
-        this.majorAxis = options.majorAxis; 
-        this.scale = options.scale;
-        
-        let p = this.orbitRot * Math.PI / 180;
+        this.angle = options.initialAngle;      //궤도 상 시작 위치 원일점이 0도.
 
-        this.focusX = Math.sqrt(this.a*this.a - this.b*this.b) * Math.cos(p) * util.screenMag;
-        this.focusY = Math.sqrt(this.a*this.a - this.b*this.b) * Math.sin(p) * util.screenMag;
+        this.scale = options.scale;         //실제 눈에 보일 크기
+        
+        let p = this.orbitRot * Math.PI / 180;      //궤도 회전각의 라디안
+        this.a = options.majorAxis;                    //장반경
+        this.c = options.majorAxis * options.eccentricity;    //초점과 중심 사이의 거리
+        this.b = Math.sqrt(Math.pow(this.a, 2) - Math.pow(this.c, 2));    //단반경
+
+        this.focusX = this.c * Math.cos(p) * util.screenMag;
+        this.focusY = this.c * Math.sin(p) * util.screenMag;
 
         this.graphicX = Math.sqrt(this.a*this.a - this.b*this.b) * util.screenMag;
         this.graphicY = 0;
@@ -84,17 +69,13 @@ class CelestialBody {
         }else{
             this.centerX = this.parent.x;
             this.centerY = this.parent.y;
-            this.incAngle =  (360 / this.orbitalPeriod)  * (referenceFPS / Math.pow(util.currentFPS, 2));
+            this.incAngle =  (360 / this.orbitalPeriod) / util.referenceFPS  * util.animateSpeed;
         }
 
         this.x = (this.a * Math.cos(t) * Math.cos(p) - this.b * Math.sin(t) * Math.sin(p) + this.focusX) * util.screenMag + this.centerX;
         this.y = (this.a * Math.cos(t) * Math.sin(p) + this.b * Math.sin(t) * Math.cos(p) + this.focusY) * util.screenMag + this.centerY;
-
-        if(this.incAngle == Infinity){
-        }else{
-            this.angle += this.incAngle;
-        }
         
+        this.angle += this.incAngle;
 
         if(this.angle > 360){
             this.angle -= 360;
@@ -121,7 +102,7 @@ class CelestialBody {
                 let parentCenter = this.parent.nextPos(util.avgFrametime * i);
                 centerX = parentCenter.x;
                 centerY = parentCenter.y;
-                incAngle =  (360 / this.orbitalPeriod)  * (referenceFPS / Math.pow(util.currentFPS, 2));
+                incAngle =  (360 / this.orbitalPeriod)  / util.referenceFPS * util.animateSpeed;
             }
 
             let rad = (angle) * Math.PI / 180;
@@ -149,44 +130,31 @@ class CelestialBody {
         
 }
 
-export function setup(iStage){
-    stage = iStage;
-    container = new PIXI.Container({autoResize : true});
-    stage.addChild(container);
+export function setup(stage){
+
+    //다른 천체와 궤도가 겹치더라도 항상 천체는 궤적보다 앞에 있어야함.
+    //따라서 다른 컨테이너로 관리하여 항상 궤적을 먼저 그리도록 함.
+    orbitContainer = new PIXI.Container(1500, {autoResize : true});
+    stage.addChild(orbitContainer);
+    bodyContainer = new PIXI.Container(1500, {autoResize : true});
+    stage.addChild(bodyContainer);
 }
 
 export function addBody(options){
-    
-    
     let newBody = new CelestialBody(options);
 
     bodies.push(newBody);
-    
-    container.removeChildren();
-    setOrbitGraphics();
-    setBodiesSprite();
+    orbitContainer.addChild(newBody.orbitGraphic);
+    bodyContainer.addChild(newBody.sprite);
 
     return newBody;
 }
 
-function setOrbitGraphics(){
-    for(let i = 0; i < bodies.length; i++){
-        container.addChild(bodies[i].orbitGraphic);
-    }
-}
-function setBodiesSprite(){
-    for(let i = 0; i < bodies.length; i++){
-        container.addChild(bodies[i].sprite);
-    }
-}
-
 export function resize(){
-
     for(let i = 0; i< bodies.length; i++){
         const item = bodies[i];
         item.resize();
     }
-
 }
 
 export function animate(){

@@ -7,6 +7,7 @@
 html{
     width: 100%;
     height: 100%;
+    background-color: #000000;
 }
 
 body {
@@ -118,9 +119,7 @@ body * {
 
 
 
-.bottom{
-    z-index: 3;
-}
+
 
 #modal {
     background-color: rgba(100,100,100, 0.7);
@@ -134,22 +133,20 @@ body * {
     position: absolute;
     left: 0;
     text-align: left;
+    color: #FFFFFF;
     
     z-index: 3;
   }
 #modal .header {
     padding: 0;
     border-bottom: 1px solid #ddd;
-    font: 300 24px Lato;
     position: relative;
     height: 10%;
 
-    
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-
 }
 #modal .body {
     padding: 20px;
@@ -181,12 +178,28 @@ body * {
     top: 50%;
 }
 
+#bodyName{
+    width: 30%;
+    text-align: center;
+    
+    font: 400 6vmin Lato;
+}
 
+#bodySimpleDesc{
+    width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    
+    font: 300 4vmin Lato;
+}
+
+/* ~~~~~~스플래시 화면~~~~~~ */
 #splash{
-    background : #000000;
+    background-color: rgba(0,0,0, 0.8);
+    backdrop-filter: blur(10px);
     color: #FFFFFF;
-    font-size: 4vmin;
-    font-family: 'Noto Sans';
     position: absolute;
     top:0;
     left:0;
@@ -194,9 +207,9 @@ body * {
     height: 100%;
     z-index: 5;
 
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
 
     opacity: 1;
     transition-duration: 1s;
@@ -209,4 +222,37 @@ body * {
 
 #splash.invisible{
     display: none;
+}
+
+#splash_text{
+    
+    z-index: 5;
+
+    color: #FFFFFF;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+    
+    
+    font-size: 5vmin;
+    font-family: 'Noto Sans';
+
+    transform: translate(-50%, -50%);
+
+    transition-duration: 1s;
+    transition-property: top, left, font-size, transform, opacity;
+}
+
+
+#splash_text.move{
+    top: 1%;
+    left: 1%;
+    font-size: x-large;
+
+    opacity: 0.5;
+
+    transform: translateY(0%);
+    transform: translateX(0%);
 }

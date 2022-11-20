@@ -45,10 +45,13 @@ export function setup(app){
     viewport.on("zoomed", (e) => {
         zoom(e.viewport.scaled);
     });
+    
+    viewport.addChild(focusGraphic);
 
     return viewport;
 }
 
+let focusGraphic = new PIXI.Graphics();
 
 export function setFocus(body){
     
@@ -56,7 +59,14 @@ export function setFocus(body){
     if(body == focused){
         focused = undefined;
         viewport.plugins.remove('follow');
-        window.navigator.vibrate([2,50,1]);
+        window.navigator.vibrate([1,75,3]);
+        
+        clearFocusGraphic();
+
+        if(lastTimeout){
+            clearTimeout(lastTimeout);
+            lastTimeout = null;
+        }
     }else{
         focused = body;
         window.navigator.vibrate(1);
@@ -66,11 +76,6 @@ export function setFocus(body){
             lastTimeout = null;
         }
 
-        if(lastTimeout){
-            clearTimeout(lastTimeout);
-            lastTimeout = null;
-        }
-        
         viewport.plugins.remove('follow');
         viewport.animate({
             time: focusAnimationTime,
@@ -81,12 +86,41 @@ export function setFocus(body){
         
         lastTimeout = setTimeout(()=>{
             viewport.follow(body.sprite);
-            window.navigator.vibrate([2,50,1]);
+            window.navigator.vibrate([3,75,1]);
         }, focusAnimationTime);
 
-        
+        drawFocusGraphic();
     }
 }
+
+function clearFocusGraphic(){
+    focusGraphic.clear();
+}
+
+function drawFocusGraphic(){
+    focusGraphic.clear();
+        focusGraphic.lineStyle({
+            color: 0xf36e4c,
+            width: 40,
+            cap: PIXI.LINE_CAP.ROUND,
+        });
+    //focusGraphic.drawRect(-1000, -1000, 2000, 2000);
+
+    for(let i = 0; i < 360; i += 15){
+        let rad = i * Math.PI / 180;
+        
+        focusGraphic.moveTo(1100 * Math.cos(rad), 1100 * Math.sin(rad));
+        focusGraphic.lineTo(1200 * Math.cos(rad), 1200 * Math.sin(rad));
+    }
+
+
+    focusGraphic.scale.set(util.screenMag * focused.scale);
+    
+    focusGraphic.position.x = focused.x;
+    focusGraphic.position.y = focused.y;
+}
+
+
 
 
 let modalEnabled = false;
@@ -137,13 +171,14 @@ export function modalup(){
         });
         
         lastTimeout = setTimeout(()=>{
-            viewport.follow(focused.sprite);
             viewport.resize(
                 util.width,
                 util.height / 2,
                 util.width,
                 util.height,
             );
+            
+            viewport.follow(focused.sprite);
         }, modalAnimationTime);
         
     }
@@ -177,7 +212,6 @@ export function modaldown(){
         });
         
         lastTimeout = setTimeout(()=>{
-            viewport.follow(focused.sprite);
             viewport.resize(
                 util.width,
                 util.height,
@@ -185,14 +219,30 @@ export function modaldown(){
                 util.height,
             );
             
+            viewport.follow(focused.sprite);
+            
         }, modalAnimationTime);
     }
 
     modalEnabled = false;
 }
 
+let focusGraphicAngle = 0;
+export function animate(){
+    animateFocusGraphic();
+}
 
-
+function animateFocusGraphic(){
+    if(focused){
+        focusGraphic.position.x = focused.x;
+        focusGraphic.position.y = focused.y;
+        focusGraphicAngle += 10 / util.referenceFPS * util.animateSpeed;
+        if(focusGraphicAngle > 360){
+            focusGraphicAngle -= 360;
+        }
+        focusGraphic.angle = focusGraphicAngle;
+    }
+}
 
 
 

@@ -60,7 +60,7 @@ let earth = cb.addBody({
 
     majorAxis: 200,
     orbitRot: 0,
-    eccentricity : 0,
+    eccentricity : 0.0167086,
     orbitalPeriod : 365,
 });
 
@@ -74,7 +74,7 @@ let moon = cb.addBody({
 
     majorAxis: 20,
     orbitRot: 100,
-    eccentricity : 0.0167,
+    eccentricity : 0.0549006,
     orbitalPeriod : 27,
 });
 
@@ -113,12 +113,22 @@ let saturn = cb.addBody({
 
 //애니메이션 Tick
 let nextAnimation = requestAnimationFrame(animate.bind(this));
+
+let cbAnimEnabled = false;
+setTimeout(()=>{
+    cbAnimEnabled = true;
+}, 2000);
+
 function animate(){
     bg.draw();
-    cb.animate();
+    if(cbAnimEnabled){
+        cb.animate();
+    }
     cb.draw();
+    vp.animate();
     util.frameCount();
     nextAnimation = requestAnimationFrame(animate.bind(this));
+    
 }
 
 function resize(){
@@ -140,10 +150,10 @@ function modaldown(){
     console.log('모달 사라짐');
 }
 
-let openbtn = document.getElementById('openbtn');
+let modalHeader = document.getElementById('modal_header');
 
 let modalEnabled = false;
-openbtn.addEventListener('click', () => {
+modalHeader.addEventListener('click', () => {
     if(!modalEnabled){
         modalup();
         vp.modalup();
@@ -158,6 +168,7 @@ openbtn.addEventListener('click', () => {
 
 window.addEventListener('load', () => {
     document.getElementById('splash').classList.add('fadeOut');
+    document.getElementById('splash_text').classList.add('move');
     setTimeout(()=>{
         document.getElementById('splash').classList.add('invisible');
     }, 1000);

@@ -7,7 +7,8 @@ self.addEventListener('install', pEvent => {
     pEvent.waitUntil(
         caches.open(sCacheName)
         .then(pCache => {
-          return pCache.addAll(aFilesToCache);
+          //return pCache.addAll(aFilesToCache); //캐시 저장
+          return pCache.delete(aFilesToCache);    //하지만 지금은 저장 안함
         })
       );
 });

@@ -9,10 +9,6 @@ let particles = [];
 //파티클 컨테이너
 let container;
 
-//뷰포트 크기 재계산시 사용할 이전 뷰포트 크기
-let prevWidth;
-let prevHeight;
-
 //뷰포트 줌에 따른 파티클 크기를 저장
 let particleScale = 1;
 
@@ -28,7 +24,7 @@ class Particle {
         this.sprite.anchor.set(0.5);
         this.sprite.x = pos.x;
         this.sprite.y = pos.y;
-        this.scale = Math.random() * 0.05 * util.screenMag;
+        this.scale = Math.random() * 0.3 * util.screenMag;
     }
 
     draw(){
@@ -38,8 +34,6 @@ class Particle {
 }
 
 export function setup(stage){
-    prevWidth = util.width;
-    prevHeight = util.height;
 
     container = new PIXI.ParticleContainer(10000, {
         autoResize : true,
@@ -69,20 +63,16 @@ function placeParticles(){
         particles.push(item);
     }
 
-    document.getElementById('particle_indicator').innerHTML = totalParticles;
+    //document.getElementById('particle_indicator').innerHTML = totalParticles;
 }
 
 
 export function resize(){
     const targetParticles = Math.floor(util.width * util.height / pixelPerParticle);
-    const diffX = util.width / prevWidth;
-    const diffY = util.height / prevHeight;
-    prevWidth = util.width;
-    prevHeight = util.height;
 
     for(let i = 0; i < particles.length; i++){
-        particles[i].sprite.x *= diffX;
-        particles[i].sprite.y *= diffY;
+        particles[i].sprite.x *= util.changeRatioW;
+        particles[i].sprite.y *= util.changeRatioH;
     }
 
     if(particles.length > targetParticles){
@@ -101,7 +91,7 @@ export function resize(){
         }
     }
 
-    document.getElementById('particle_indicator').innerHTML = totalParticles;
+    //document.getElementById('particle_indicator').innerHTML = totalParticles;
 
     
 }

@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Expires" content="-1">
   <script src="./lib/pixi.min.js"></script>
   <script src="./lib/viewport.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="./img/icon-256.png">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" href="img/icon-80.png">
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <link rel="stylesheet" type="text/css" href="modal.css">
   <title>WebSolarSystem</title>
 </head>
-
-<script type="module" src="./js/util.js"></script>
-<script type="module" src="./js/background.js"></script>
-<script type="module" src="./js/viewport.js"></script>
 <script type="module" src="./js/index.js"></script>
 
 <script>
@@ -36,26 +34,29 @@
   <span id="title"> WebSolarSystem </span>
 
   <details id="settings">
-      <summary id="control_title">Settings</summary>
+      <summary id="control_title">천체</summary>
 
       
 
-      <div id="settings_panel">
-        <p class="particle_counter"># of Particles : <span id="particle_indicator"></span></p> 
+      <div>
+        <!-- <p class="particle_counter"># of Particles : <span id="particle_indicator"></span></p>  -->
         <p class="fps_counter">FPS : <span id="fps_indicator"></span></p> 
+        
       </div>
+
+      <ul id = "body_list"></ul>
       
   </details>
   
     <div id="modal">
       <div id="modal_header" class="header">
-        <p id = "bodyName"> 데이모스 </p>
-        <p id = "bodySimpleDesc"> Deimos </p>
-        <!-- <a id="openbtn" class="btn js-click-modal">Toggle Modal</a> -->
+        <p class='init_message'> 정보를 보려면 천체를 선택하세요. </p>
       </div>
 
-      <div class="body">
-        <p>And here is all its contents.</p>
+      <div id="modal_body" >
+        <div id="body_details" class="content">
+
+        </div>
       </div>
     </div>
 

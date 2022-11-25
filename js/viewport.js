@@ -1,14 +1,23 @@
 import * as util from "./util.js"
-import {zoom} from "./background.js"
+import {zoom as bgZoom} from "./background.js"
+import {zoom as cbZoom} from "./celestialbodies.js" 
 
 let viewport;
 
-let focused;
-let lastTimeout = null;
+export let focused;
+let lastModalTimeout = null;
 
+let focusGraphic = new PIXI.Graphics();     //포커스된 천체 주변에 표시될 효과
+let focusGraphicAngle = 0;
 
 const focusAnimationTime = 1000; //포커스를 이동할 때 재생할 애니메이션의 길이
 const modalAnimationTime = 600;
+
+let viewportHeightRatio = 1;        //뷰포트 높이 비율 - 모달 팝업에 사용
+
+const modalupViewportHeightRatio = 0.45;
+const modalPosRatio = 4 / ((1 - modalupViewportHeightRatio) / 0.5);
+
 
 export function setup(app){
     viewport = new pixi_viewport.Viewport({
@@ -17,7 +26,8 @@ export function setup(app){
         worldWidth: util.width,
         worldHeight: util.height,
         interaction: app.renderer.plugins.interaction, // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
-        ticker : app.ticker
+        ticker : app.ticker,
+        passiveWheel: false,
     });
     app.stage.addChild(viewport);
 
@@ -28,22 +38,19 @@ export function setup(app){
     .decelerate();
 
     viewport.clamp({
-        left: false,                // whether to clamp to the left and at what value
-        right: false,               // whether to clamp to the right and at what value
-        top: false,                 // whether to clamp to the top and at what value
-        bottom: false,              // whether to clamp to the bottom and at what value
-        direction: 'all',           // (all, x, or y) using clamps of [0, viewport.worldWidth / viewport.worldHeight]; replaces left / right / top / bottom if set
-        underflow: 'center',	       // where to place world if too small for screen (e.g., top - right, center, none, bottomleft)
+        direction: 'all',
+        underflow: 'center',
     });
 
     viewport.clampZoom({
         minScale: 1,                 // minimum scale
-        maxScale: 20,                 // minimum scale
+        maxScale: 250,                 // maximum scale
     })
 
 
     viewport.on("zoomed", (e) => {
-        zoom(e.viewport.scaled);
+        bgZoom(e.viewport.scaled);
+        cbZoom(e.viewport.scaled);
     });
     
     viewport.addChild(focusGraphic);
@@ -51,46 +58,35 @@ export function setup(app){
     return viewport;
 }
 
-let focusGraphic = new PIXI.Graphics();
 
+
+/*~~~~~~~천체 포커스 진행 애니메이션~~~~~~~*/ 
 export function setFocus(body){
-    
-    
-    if(body == focused){
-        focused = undefined;
-        viewport.plugins.remove('follow');
-        window.navigator.vibrate([1,75,3]);
-        
-        clearFocusGraphic();
+    focused = body;
+    window.navigator.vibrate(1);
 
-        if(lastTimeout){
-            clearTimeout(lastTimeout);
-            lastTimeout = null;
-        }
-    }else{
-        focused = body;
-        window.navigator.vibrate(1);
-
-        if(lastTimeout){
-            clearTimeout(lastTimeout);
-            lastTimeout = null;
-        }
-
-        viewport.plugins.remove('follow');
-        viewport.animate({
-            time: focusAnimationTime,
-            position: body.nextPos(focusAnimationTime),
-            scale: body.focusScale,
-            ease: 'easeOutCubic',
-        });
-        
-        lastTimeout = setTimeout(()=>{
+    viewport.plugins.remove('follow');
+    viewport.animate({
+        time: focusAnimationTime,
+        position: body.nextPos(focusAnimationTime),
+        scale: body.focusScale,
+        ease: 'easeOutCubic',
+        callbackOnComplete: ()=>{
             viewport.follow(body.sprite);
             window.navigator.vibrate([3,75,1]);
-        }, focusAnimationTime);
+        },
+    });
+    drawFocusGraphic();
+}
 
-        drawFocusGraphic();
-    }
+export function releaseFocus(){
+    focused = undefined;
+                                                                                                                                                                                                                                                                                                                                            
+    viewport.plugins.remove('follow');
+
+    window.navigator.vibrate([1,75,3]);
+    
+    clearFocusGraphic();
 }
 
 function clearFocusGraphic(){
@@ -100,134 +96,124 @@ function clearFocusGraphic(){
 function drawFocusGraphic(){
     focusGraphic.clear();
         focusGraphic.lineStyle({
-            color: 0xf36e4c,
+            color: 0xff5500,
             width: 40,
             cap: PIXI.LINE_CAP.ROUND,
         });
-    //focusGraphic.drawRect(-1000, -1000, 2000, 2000);
 
     for(let i = 0; i < 360; i += 15){
         let rad = i * Math.PI / 180;
-        
         focusGraphic.moveTo(1100 * Math.cos(rad), 1100 * Math.sin(rad));
         focusGraphic.lineTo(1200 * Math.cos(rad), 1200 * Math.sin(rad));
     }
 
-
     focusGraphic.scale.set(util.screenMag * focused.scale);
-    
     focusGraphic.position.x = focused.x;
     focusGraphic.position.y = focused.y;
 }
 
-
-
-
-let modalEnabled = false;
-
 export function resize(){
-    if(modalEnabled){
-        viewport.resize(
-            util.width,
-            util.height / 2,
-            util.width,
-            util.height,
-        );
+    let prevCenterX = viewport.center.x;
+    let prevCenterY = viewport.center.y;
+    viewport.resize(
+        util.width,
+        util.height * viewportHeightRatio,
+        util.width,
+        util.height,
+    );
+    
+    if(focused){
+        focusGraphic.scale.set(util.screenMag * focused.scale);
+        viewport.scaled = focused.focusScale;
     }else{
-        viewport.resize(
-            util.width,
-            util.height,
-            util.width,
-            util.height,
-        );
+        viewport.moveCenter(prevCenterX * util.changeRatioW, prevCenterY * util.changeRatioH);
+    }
+}
+
+function modalAdjust(){
+    viewport.resize(
+        util.width,
+        util.height * viewportHeightRatio,
+        util.width,
+        util.height,
+    );
+    
+    if(focused){
+        
+        viewport.scaled = focused.focusScale;
+    }
+}
+
+
+/*~~~~~~~천체 정보 창 애니메이션~~~~~~~*/ 
+export function modalup(){
+
+    if(!focused){
+        viewportHeightRatio = modalupViewportHeightRatio;
+        modalAdjust();
+    }else{
+        let nextPosition = focused.nextPos(modalAnimationTime);
+        nextPosition.y += util.height / (modalPosRatio * focused.focusScale);
+
+        viewport.animate({
+            time: modalAnimationTime,
+            position: nextPosition,
+            scale: focused.focusScale,
+            ease: 'easeInOutCubic',
+            callbackOnComplete: ()=>{
+                viewportHeightRatio = modalupViewportHeightRatio;
+                modalAdjust();
+                viewport.follow(focused.sprite);
+            },
+        });
+        setTimeout(()=>{
+            viewportHeightRatio = modalupViewportHeightRatio;
+            modalAdjust();
+        }, modalAnimationTime);
+        viewport.plugins.remove('wheel');
+        viewport.plugins.remove('pinch');
     }
     
 }
 
-export function modalup(){
-
-    if(!focused){
-        viewport.resize(
-            util.width,
-            util.height / 2,
-            util.width,
-            util.height,
-        );
-    }else{
-        let nextPosition = focused.nextPos(modalAnimationTime);
-        nextPosition.y += util.height / (4 * focused.focusScale);
-
-        if(lastTimeout){
-            clearTimeout(lastTimeout);
-            lastTimeout = null;
-        }
-
-        //viewport.plugins.remove('follow');
-        viewport.animate({
-            time: modalAnimationTime,
-            position: nextPosition,
-            scale: focused.focusScale,
-            ease: 'easeInOutCubic',
-        });
-        
-        lastTimeout = setTimeout(()=>{
-            viewport.resize(
-                util.width,
-                util.height / 2,
-                util.width,
-                util.height,
-            );
-            
-            viewport.follow(focused.sprite);
-        }, modalAnimationTime);
-        
-    }
-    modalEnabled = true;
-
-}
-
 export function modaldown(){
+    
     if(!focused){
-        viewport.resize(
-            util.width,
-            util.height,
-            util.width,
-            util.height,
-        );
+        viewportHeightRatio = 1;
+        modalAdjust();
     }else{
         let nextPosition = focused.nextPos(modalAnimationTime);
-        nextPosition.y -= util.height / (4 * focused.focusScale);
+        nextPosition.y -= util.height / (modalPosRatio * focused.focusScale);
 
-        if(lastTimeout){
-            clearTimeout(lastTimeout);
-            lastTimeout = null;
-        }
-
-        //viewport.plugins.remove('follow');
         viewport.animate({
             time: modalAnimationTime,
             position: nextPosition,
-            scale: focused.focusScale,
             ease: 'easeInOutCubic',
+            scale: focused.focusScale,
+            callbackOnComplete: ()=>{
+                viewportHeightRatio = 1;
+                modalAdjust();
+                if(focused)
+                    viewport.follow(focused.sprite);
+            },
         });
-        
-        lastTimeout = setTimeout(()=>{
-            viewport.resize(
-                util.width,
-                util.height,
-                util.width,
-                util.height,
-            );
-            
-            viewport.follow(focused.sprite);
-            
-        }, modalAnimationTime);
-    }
 
-    modalEnabled = false;
+        
+        setTimeout(()=>{
+            viewportHeightRatio = 1;
+            modalAdjust();
+        }, modalAnimationTime);
+        viewport.wheel().pinch();
+    }
+    
+    
 }
 
-let focusGraphicAngle = 0;
+
+
+
+
+/*~~~~~~~천체 포커스 효과의 애니메이션~~~~~~~*/ 
 export function animate(){
     animateFocusGraphic();
 }

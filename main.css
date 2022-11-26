@@ -50,7 +50,7 @@ body {
     z-index: 2;
     float:left;
 
-    color: #AAAAAA;
+    color: #FFFFFF;
 
     font-family: 'Noto Sans';
     font-size: x-large;
@@ -140,6 +140,7 @@ body {
     z-index: 5;
 
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
@@ -157,15 +158,12 @@ body {
 }
 
 #splash_text{
-    
-    z-index: 5;
-
     color: #FFFFFF;
-
-    position: absolute;
     
     font-size: 7vmin;
     font-family: 'Noto Sans';
+
+    margin: 1%;
 
     transition-duration: 1s;
     transition-property: font-size, opacity;
@@ -173,5 +171,24 @@ body {
 
 #splash_text.move{
     font-size: 5vmin;
-    opacity: 0.0;
+}
+
+#myProgress {
+    width: 50vmin;
+    height: 4vmin;
+    background-color: rgb(128, 128, 128);
+
+    
+    transition-duration: 1s;
+    transition-property: width, height;
+}
+  
+#myBar {
+    width: 0%;
+    height: 100%;
+    background-color: rgb(0, 128, 0);
+}
+
+#myProgress.move{
+    width: 35vmin;
 }

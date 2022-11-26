@@ -17,6 +17,10 @@ export function bodyClicked(body){
             if(modalEnabled){
                 modaldown();
                 vp.modaldown();
+                focusCooldown = true;
+                setTimeout(()=>{
+                    focusCooldown = false;
+                }, 600);
             }
             vp.releaseFocus();
             modalLocked = true;

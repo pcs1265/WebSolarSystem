@@ -20,7 +20,7 @@ class CelestialBody {
         this.centerX;
         this.centerY;
         this.originalFocusScale = options.focusScale;
-        this.focusScale = this.originalFocusScale * util.screenMagH / 0.15;       //포커스 되었을 때 뷰포트 줌 크기
+        this.focusScale = this.originalFocusScale * util.screenMagH;       //포커스 되었을 때 뷰포트 줌 크기
 
         this.orbitRot = options.orbitRot;
         this.orbitalPeriod = options.orbitalPeriod;
@@ -46,7 +46,7 @@ class CelestialBody {
         this.avgDist = (this.a + Math.sqrt(Math.pow(this.b, 2) + Math.pow(this.c * util.screenMag, 2))) / 2;
         this.animate();
 
-        this.sprite = new PIXI.Sprite(options.texture);
+        this.sprite = new PIXI.Sprite.from(options.texture);
         this.sprite.scale.set(this.scale * util.screenMag);
         this.sprite.anchor.set(0.5);
         this.sprite.x = this.x;
@@ -57,7 +57,6 @@ class CelestialBody {
         this.sprite.on('tap', (event) => { em.bodyClicked(this); });
 
         this.avgDist = this.calcAvgDist();
-        console.log(this.x, this.y);
     }
 
     animate(){

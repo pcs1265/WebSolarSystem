@@ -19,12 +19,12 @@ let totalParticles = 0;
 
 class Particle {
     constructor(pos, texture){
-        this.sprite = new PIXI.Sprite(texture);
+        this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
         this.sprite.scale.set(this.scale *  particleScale);
         this.sprite.anchor.set(0.5);
         this.sprite.x = pos.x;
         this.sprite.y = pos.y;
-        this.scale = Math.random() * 0.3 * util.screenMag;
+        this.scale = (Math.random() * 0.4 + 0.4) * util.screenMag;
     }
 
     draw(){
@@ -97,7 +97,7 @@ export function resize(){
 }
 
 export function zoom(scale){    
-    particleScale = 1 / scale;
+    particleScale = 1 / (scale);
 }
 
 export function draw(){

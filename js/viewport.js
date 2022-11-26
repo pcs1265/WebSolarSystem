@@ -5,7 +5,6 @@ import {zoom as cbZoom} from "./celestialbodies.js"
 let viewport;
 
 export let focused;
-let lastModalTimeout = null;
 
 let focusGraphic = new PIXI.Graphics();     //포커스된 천체 주변에 표시될 효과
 let focusGraphicAngle = 0;
@@ -44,7 +43,7 @@ export function setup(app){
 
     viewport.clampZoom({
         minScale: 1,                 // minimum scale
-        maxScale: 250,                 // maximum scale
+        maxScale: 100 * util.screenMagH,                 // maximum scale
     })
 
 
@@ -52,8 +51,6 @@ export function setup(app){
         bgZoom(e.viewport.scaled);
         cbZoom(e.viewport.scaled);
     });
-    
-    viewport.addChild(focusGraphic);
 
     return viewport;
 }
@@ -89,6 +86,9 @@ export function releaseFocus(){
     clearFocusGraphic();
 }
 
+export function setFocusGraphic(){
+    viewport.addChild(focusGraphic);
+}
 function clearFocusGraphic(){
     focusGraphic.clear();
 }
@@ -121,10 +121,12 @@ export function resize(){
         util.width,
         util.height,
     );
-    
+    viewport.clampZoom({
+        minScale: 1,                 // minimum scale
+        maxScale: 100 * util.screenMagH,                 // maximum scale
+    })
     if(focused){
         focusGraphic.scale.set(util.screenMag * focused.scale);
-        viewport.scaled = focused.focusScale;
     }else{
         viewport.moveCenter(prevCenterX * util.changeRatioW, prevCenterY * util.changeRatioH);
     }

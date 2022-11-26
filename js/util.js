@@ -5,7 +5,7 @@ export let centerW = width / 2;
 export let centerH = height / 2;
 
 export let screenMag = 0.15 * Math.min(width, height) / 1080;
-export let screenMagH = Math.max(height / width, 1);
+export let screenMagH = Math.max(height / width, 1) / 0.15;
 
 export let changeRatioW = 1;
 export let changeRatioH = 1;
@@ -24,7 +24,7 @@ export function resize(){
         centerW = width / 2;
         centerH = height / 2;
         screenMag = 0.15 * Math.min(width, height) / 1080;
-        screenMagH = Math.max(height / width, 1);
+        screenMagH = Math.max(height / width, 1) / 0.15;
     }
 }
 

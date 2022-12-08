@@ -2,19 +2,22 @@ import * as vp from "./viewport.js"
 import * as cb from "./celestialbodies.js"
 
 let focusCooldown = false;
-
+let lastFocused = null;
 export function bodyClicked(body){
     if(!focusCooldown){
         if(body != vp.focused){
             vp.setFocus(body);
             importPage(body);
+            bottombarFocused(body);
             modalLocked = false;
             focusCooldown = true;
             setTimeout(()=>{
                 focusCooldown = false;
             }, 1000);
+            lastFocused = body;
         }else{
             resetPage();
+            bottombarUnfocused(body);
             if(modalEnabled){
                 modaldown();
                 vp.modaldown();
@@ -35,9 +38,9 @@ async function fetchHtmlAsText(url) {
 }
 
 async function importPage(target) {
-    document.getElementById('modal_header').innerHTML = "<p id = 'bodyNameKor'></p><p id = 'bodyNameEn'></p><div id = 'show_details'> 상세정보 </div>";
-    document.getElementById('bodyNameKor').innerHTML = target.nameKor;
-    document.getElementById('bodyNameEn').innerHTML = target.nameEn;
+    document.getElementById('modal_header').innerHTML = "<p id = 'bodyNameKor'>" + target.nameKor +"</p><p id = 'bodyNameEn'>" + target.nameEn + "</p><div id = 'show_details'> 상세정보 </div>";
+    //document.getElementById('bodyNameKor').innerText = target.nameKor;
+    //document.getElementById('bodyNameEn').innerText = target.nameEn;
     document.getElementById('body_details').innerHTML = await fetchHtmlAsText('./bodyDocs/detail/' + target.nameEn + '.html');
 }
 
@@ -50,11 +53,13 @@ function resetPage(){
 
 export function modalup(){
     document.getElementById('modal').classList.add('modal-open');
+    document.getElementById('bottom_bar').classList.add('up');
     modalEnabled = true;
 }
 
 export function modaldown(){
     document.getElementById('modal').classList.remove('modal-open');
+    document.getElementById('bottom_bar').classList.remove('up');
     modalEnabled = false;
 }
 
@@ -96,13 +101,29 @@ options_close_button.addEventListener('click', () => {
 let options_simulate_speed = document.getElementById('options_simulate_speed');
 
 options_simulate_speed.addEventListener('input', () => {
-    let currSpeed = Math.pow(options_simulate_speed.value, 2).toFixed(2);
-    if(currSpeed == 0){
-        document.getElementById('options_simulate_speed_indicator').innerText = '일시정지';
-    }else{
-        document.getElementById('options_simulate_speed_indicator').innerText = '1초 = ' + currSpeed + '일';
+    let currSpeed = options_simulate_speed.value;
+    switch(currSpeed){
+        case '0':
+            document.getElementById('options_simulate_speed_indicator').innerText = '일시정지';
+            cb.adjustSimulateSpeed(0);
+            break;
+        case '1':
+            document.getElementById('options_simulate_speed_indicator').innerText = '실시간';
+            cb.adjustSimulateSpeed(1/24/60/60);
+            break;
+        case '2':
+            document.getElementById('options_simulate_speed_indicator').innerText = '1초 = 1분';
+            cb.adjustSimulateSpeed(1/24/60);
+            break;
+        case '3':
+            document.getElementById('options_simulate_speed_indicator').innerText = '1초 = 1시간';
+            cb.adjustSimulateSpeed(1/24);
+            break;
+        case '4':
+            document.getElementById('options_simulate_speed_indicator').innerText = '1초 = 1일';
+            cb.adjustSimulateSpeed(1);
+            break;
     }
-    cb.adjustSimulateSpeed(currSpeed);
 });
 
 let initialDate = new Date('2022-11-25');
@@ -137,3 +158,58 @@ FPS_enabled_box.addEventListener('click', () => {
         FPS_enabled = !FPS_enabled;
     }
 });
+
+// 바텀바 이벤트 핸들러
+
+let prev_body_button = document.getElementById('prev_body_button');
+let next_body_button = document.getElementById('next_body_button');
+prev_body_button.classList.add('invisible');
+
+prev_body_button.addEventListener('click', () => {
+    if(!focusCooldown){
+        cb.focusPrevBody();
+        focusCooldown = true;
+        setTimeout(()=>{
+            focusCooldown = false;
+        }, 500);
+    }
+});
+
+
+next_body_button.addEventListener('click', () => {
+    if(!focusCooldown){
+        if(!vp.focused && lastFocused){
+            bodyClicked(lastFocused);
+        }else{
+            cb.focusNextBody();
+        }
+        focusCooldown = true;
+        setTimeout(()=>{
+            focusCooldown = false;
+        }, 500);
+    }
+});
+
+function bottombarFocused(body){
+    if(!cb.getNextBody(body)){
+        next_body_button.classList.add('invisible');
+        document.getElementById('bottom_bar_right_msg').innerText = "";
+    }else{
+        next_body_button.classList.remove('invisible');
+        document.getElementById('bottom_bar_right_msg').innerText = cb.getNextBody(body).nameKor;
+    }
+
+    if(!cb.getPrevBody(body)){
+        prev_body_button.classList.add('invisible');
+        document.getElementById('bottom_bar_left_msg').innerText = "";
+    }else{
+        prev_body_button.classList.remove('invisible');
+        document.getElementById('bottom_bar_left_msg').innerText = cb.getPrevBody(body).nameKor;
+    }
+}
+function bottombarUnfocused(body){
+    prev_body_button.classList.add('invisible');
+    next_body_button.classList.remove('invisible');
+    document.getElementById('bottom_bar_right_msg').innerText = body.nameKor + "(으)로 이동";
+    document.getElementById('bottom_bar_left_msg').innerText = "";
+}

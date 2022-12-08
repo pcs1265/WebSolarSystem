@@ -4,7 +4,7 @@ import {zoom as cbZoom} from "./celestialbodies.js"
 
 let viewport;
 
-export let focused;
+export let focused = undefined;
 
 let focusGraphic = new PIXI.Graphics();     //포커스된 천체 주변에 표시될 효과
 let focusGraphicAngle = 0;
@@ -78,7 +78,8 @@ export function setFocus(body){
 
 export function releaseFocus(){
     focused = undefined;
-                                                                                                                                                                                                                                                                                                                                            
+                                     
+    viewport.plugins.remove('animate');                                                                                                                                                                                                                                                                                                       
     viewport.plugins.remove('follow');
 
     window.navigator.vibrate([1,75,3]);

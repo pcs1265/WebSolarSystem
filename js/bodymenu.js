@@ -3,7 +3,6 @@ import * as em from "./eventmanager.js"
 
 let modal = document.getElementById('body_details');
 let menu = document.createElement('div');
-modal.appendChild(menu);
 
 export function addBodyToMenu(body){
     if(!body.parent){

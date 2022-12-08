@@ -220,7 +220,7 @@ function loadDone(){
         texture: app.loader.resources.io.texture,
         scale: 0.004,
         focusScale: 25,
-        initialAngle: 350,
+        initialAngle: 30,
 
         majorAxis: 50,
         orbitRot: 0,
@@ -235,7 +235,7 @@ function loadDone(){
         texture: app.loader.resources.europa.texture,
         scale: 0.004,
         focusScale: 25,
-        initialAngle: 350,
+        initialAngle: 200,
 
         majorAxis: 60,
         orbitRot: 0,
@@ -250,7 +250,7 @@ function loadDone(){
         texture: app.loader.resources.ganymede.texture,
         scale: 0.004,
         focusScale: 25,
-        initialAngle: 350,
+        initialAngle: 110,
 
         majorAxis: 70,
         orbitRot: 0,
@@ -265,7 +265,7 @@ function loadDone(){
         texture: app.loader.resources.callisto.texture,
         scale: 0.004,
         focusScale: 25,
-        initialAngle: 350,
+        initialAngle: 250,
 
         majorAxis: 80,
         orbitRot: 0,
@@ -339,6 +339,10 @@ function loadDone(){
         document.getElementById('splash_text').classList.add('move');
         document.getElementById('myProgress').classList.add('move');
     }, 1000);
+
+    //현재시간 기준으로 행성들의 위치를 설정
+    let dateDiff = (new Date() - new Date('2022-11-25'))/24/60/60/1000;
+    cb.setPos(dateDiff);
 }
 
 function showLoading(e) {

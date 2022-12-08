@@ -1,6 +1,5 @@
 import * as util from "./util.js"
 import * as em from "./eventmanager.js"
-import * as bm from "./bodymenu.js"
 
 let bodies = [];
 let bodyContainer;
@@ -8,7 +7,9 @@ let orbitContainer;
 
 let orbitLineWidthRatio = 1;
 
-let simulate_speed = 1.0;
+let simulate_speed = 1/86400;
+
+let focusedIndex = -1;
 
 //orbitalPeriod는 일 단위
 class CelestialBody {
@@ -57,8 +58,14 @@ class CelestialBody {
         this.sprite.y = this.y;
 
         this.sprite.interactive = true;
-        this.sprite.on('click', (event) => { em.bodyClicked(this); });
-        this.sprite.on('tap', (event) => { em.bodyClicked(this); });
+        this.sprite.on('click', (event) => {
+            em.bodyClicked(this);
+            focusedIndex = bodies.indexOf(this);
+        });
+        this.sprite.on('tap', (event) => {
+            em.bodyClicked(this);
+            focusedIndex = bodies.indexOf(this);
+        });
 
         this.avgDist = this.calcAvgDist();
     }
@@ -89,6 +96,9 @@ class CelestialBody {
     }
 
     nextPos(ms){
+        if(!this.parent){
+            return new PIXI.Point(this.x, this.y);
+        }
         let frames = ms / util.avgFrametime;
         let x;
         let y;
@@ -98,15 +108,10 @@ class CelestialBody {
             let centerX;
             let centerY;
             let p = this.orbitRot * Math.PI / 180;
-            
-            if(!this.parent){
-                centerX = util.centerW;
-                centerY = util.centerH;
-            }else{
-                let parentCenter = this.parent.nextPos(util.avgFrametime * i);
-                centerX = parentCenter.x;
-                centerY = parentCenter.y;
-            }
+
+            let parentCenter = this.parent.nextPos(util.avgFrametime * i);
+            centerX = parentCenter.x;
+            centerY = parentCenter.y;
 
             let rad = (angle) * Math.PI / 180;
             x = (this.a * Math.cos(rad) * Math.cos(p) - this.b * Math.sin(rad) * Math.sin(p) + this.focusX) * util.screenMag + centerX;
@@ -197,8 +202,6 @@ export function addBody(options){
     orbitContainer.addChild(newBody.orbitGraphic);
     bodyContainer.addChild(newBody.sprite);
 
-    bm.addBodyToMenu(newBody);
-
     return newBody;
 }
 
@@ -223,13 +226,16 @@ export function draw(){
     }
 }
 
+let intervalCounter = 0;
 export function zoom(scale){
     orbitLineWidthRatio = 1 / scale;
-
-    for(let i = 0; i< bodies.length; i++){
-        const item = bodies[i];
-        item.drawOrbit();
+    if(intervalCounter == 0){
+        for(let i = 0; i< bodies.length; i++){
+            const item = bodies[i];
+            item.drawOrbit();
+        }
     }
+    intervalCounter = (intervalCounter + 1) % 2;
 }
 
 export function adjustSimulateSpeed(speed){
@@ -241,4 +247,32 @@ export function setPos(dateDiff){
         const item = bodies[i];
         item.setPos(dateDiff);
     }
+}
+
+
+export function focusPrevBody(){
+    focusedIndex--;
+    em.bodyClicked(bodies[focusedIndex]);
+    if(focusedIndex <= 0){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+export function focusNextBody(){
+    focusedIndex++;
+    em.bodyClicked(bodies[focusedIndex]);
+    if(focusedIndex >= bodies.length - 1){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+export function getPrevBody(body){
+    return bodies[bodies.indexOf(body) - 1];
+}
+export function getNextBody(body){
+    return bodies[bodies.indexOf(body) + 1];
 }

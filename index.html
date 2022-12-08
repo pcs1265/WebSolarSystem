@@ -5,7 +5,8 @@
   <meta http-equiv="Expires" content="-1">
   <script src="./lib/pixi.min.js"></script>
   <script src="./lib/viewport.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+
+  <style> @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap'); </style>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="img/icon-80.png">
   <link rel="stylesheet" type="text/css" href="main.css">
@@ -14,16 +15,27 @@
 </head>
 <script type="module" src="./js/index.js"></script>
 
-<script>
-  WebFont.load({
-    google: {
-      families: ['Noto Sans']
-    }
-  });
-</script>
-
 <body>
-  
+  <div id="container">
+  </div>
+  <div id="top_bar">
+    <p id="title"> WebSolarSystem </p>
+    <p id="fps_counter"><span id="fps_indicator"></span>FPS</p>
+    <button id="options_button">설정</button>
+  </div>
+
+  <div id="modal">
+    <div id="modal_header" class="header">
+      <p class='init_message'> 정보를 보려면 천체를 선택하세요. </p>
+    </div>
+
+    <div id="modal_body" >
+      <div id="body_details" class="content">
+
+      </div>
+    </div>
+  </div>
+
   <div id = "splash">
     <p id = "splash_text">WebSolarSystem</p>
     <div id="myProgress">
@@ -31,46 +43,59 @@
     </div>
   </div>
 
-  <div id="container">
-  </div>
-  
-  <span id="title"> WebSolarSystem </span>
-
-  <details id="settings">
-      <summary id="control_title">천체</summary>
-
-      
-
-      <div>
-        <!-- <p class="particle_counter"># of Particles : <span id="particle_indicator"></span></p>  -->
-        <p class="fps_counter">FPS : <span id="fps_indicator"></span></p> 
-        
+  <div id="options">
+    <div id="options_box">
+      <div id="options_header">
+        <h1>설정</h1>
+        <img id="options_close" src="./img/x.svg">
       </div>
 
-      <ul id = "body_list"></ul>
-      
-  </details>
-  
-    <div id="modal">
-      <div id="modal_header" class="header">
-        <p class='init_message'> 정보를 보려면 천체를 선택하세요. </p>
-      </div>
-
-      <div id="modal_body" >
-        <div id="body_details" class="content">
-
+      <div id="options_body">
+        <div class="options_item">
+          <p class="options_text">날짜 </p>
+          <div class="options_input">
+            <input id="options_date" type="date" value="2022-11-25" min="2017-01-01" max="2027-12-31">
+            <button id="options_date_set_button">
+              설정
+            </button>
+          </div>
         </div>
+
+        <div class="options_item">
+          <div class="options_text">
+            <p>시뮬레이션 속도</p>
+            <p id="options_simulate_speed_indicator">1초 = 1일</p>
+          </div>
+          <div class="options_input">
+            <input id="options_simulate_speed" type="range" min='0' max='2' step="0.1" required>
+          </div>
+        </div>
+
+        <div class="options_item">
+          <p class="options_text">FPS 표시</p>
+          <input class="options_input" id="options_FPS_enable" type="checkbox">
+        </div>
+
+      </div>
+      <div id="options_footer">
+        <p>초기 행성 배치 기준일 : 2022.11.25</p>
+        <p>제작자 : 박찬수</p>
+        
+        <p>e-mail : 1265pcs@gmail.com</p>
+        <p>마지막 수정일자 : 2022.12.08</p>
       </div>
     </div>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('./service_worker.js')
-        .then(function () {
-          console.log('서비스 워커가 등록됨!');
-        })
-    }
-  </script>
+  </div>
 </body>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register('./service_worker.js')
+      .then(function () {
+        console.log('서비스 워커가 등록됨!');
+      })
+  }
+</script>
+
 </html>

@@ -1,16 +1,17 @@
 
 import * as em from "./eventmanager.js"
 
-let menu = document.getElementById('body_list');
+let modal = document.getElementById('body_details');
+let menu = document.createElement('div');
+modal.appendChild(menu);
 
-export function addMenu(body){
+export function addBodyToMenu(body){
     if(!body.parent){
         let newBody = document.createElement('li');
         newBody.id = body.nameEn;
         newBody.innerHTML = body.nameKor;
         newBody.onclick = ()=>{
             em.bodyClicked(body);
-            console.log(body);
         };
         let newTree = document.createElement('ul');
         newTree.id = body.nameEn + "_tree";
@@ -24,7 +25,6 @@ export function addMenu(body){
         newBody.innerHTML = body.nameKor;
         newBody.onclick = ()=>{
             em.bodyClicked(body);
-            console.log(body);
         };
         let newTree = document.createElement('ul');
         newTree.id = body.nameEn + "_tree";
@@ -32,4 +32,8 @@ export function addMenu(body){
         bodyTree.appendChild(newBody);
         bodyTree.appendChild(newTree);
     }
+}
+
+export function showMenu(){
+    modal.appendChild(menu);
 }

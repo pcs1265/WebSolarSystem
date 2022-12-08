@@ -14,7 +14,7 @@
     text-align: left;
     color: #FFFFFF;
     
-    z-index: 3;
+    z-index: 2;
 }
 
 #modal.modal-open{
@@ -36,12 +36,14 @@
 #bodyNameKor{
     width: 30%;
     text-align: center;
-    font: 600 6vmin Lato;
+    font-weight: 600;
+    font-size: 6vmin;
 }
 
 #bodyNameEn{
     width: 40%;
-    font: 400 4vmin Lato;
+    font-weight: 400;
+    font-size: 4vmin;
 }
 
 #show_details{
@@ -53,7 +55,8 @@
     justify-content: center;
     align-items: center;
     
-    font: 400 4vmin Lato;
+    font-weight: 400;
+    font-size: 4vmin;
 }
 
 .init_message{
@@ -62,23 +65,26 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    font: 300 4vmin Lato;
+    font-weight: 300;
+    font-size: 4vmin;
     text-align: center;
 }
 
 #modal_body {
     height: 83%;
     overflow-y: scroll;
-    
-    display: flex;
-    justify-content:center;
 }
 
 #body_details {
-    font: 300 16px Lato;
+    font-weight: 300;
+    font-size: 16px;
     height: 100%;
     width: 70%;
     min-width:min-content;
+    margin: 0 auto;
+
+    transition-duration: 1s;
+    transition-property: width;
 }
 
 @media (max-width: 1000px) {
@@ -92,8 +98,15 @@
     justify-content:center;
 }
 .item {
-    flex-basis:content;
+    flex-basis:auto;
     flex-grow: 1;
+}
+
+.inline_item{
+    
+    display: flex;
+    justify-content:center;
+    align-items: center;
 }
 
 .main_title {

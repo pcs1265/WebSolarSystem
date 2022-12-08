@@ -8,6 +8,8 @@ let orbitContainer;
 
 let orbitLineWidthRatio = 1;
 
+let simulate_speed = 1.0;
+
 //orbitalPeriod는 일 단위
 class CelestialBody {
     constructor(options){
@@ -27,6 +29,8 @@ class CelestialBody {
 
         this.incAngle = 0;
         this.angle = options.initialAngle - this.orbitRot;      //궤도 상 시작 위치 원일점이 0도.
+        
+        this.initialAngle = this.angle;
 
         this.scale = options.scale;         //실제 눈에 보일 크기
         
@@ -76,11 +80,11 @@ class CelestialBody {
         
 
         let dist = Math.sqrt(Math.pow(this.x - this.centerX, 2) + Math.pow(this.y - this.centerY, 2));
-        this.incAngle =  (360 / this.orbitalPeriod) / util.referenceFPS  * util.animateSpeed * (this.avgDist / dist);
+        this.incAngle =  (360 / this.orbitalPeriod) / util.referenceFPS  * util.animateSpeed * (this.avgDist / dist) * simulate_speed;
         if(this.parent)
-            this.angle += this.incAngle;
-        if(this.angle > 360){
-            this.angle -= 360;
+            this.angle -= this.incAngle;
+        if(this.angle < -360){
+            this.angle += 360;
         }
     }
 
@@ -109,12 +113,12 @@ class CelestialBody {
             y = (this.a * Math.cos(rad) * Math.sin(p) + this.b * Math.sin(rad) * Math.cos(p) + this.focusY) * util.screenMag + centerY;
 
             let dist = Math.sqrt(Math.pow(this.x - this.centerX, 2) + Math.pow(this.y - this.centerY, 2));
-            incAngle =  (360 / this.orbitalPeriod) / util.referenceFPS  * util.animateSpeed * (this.avgDist / dist);
+            incAngle =  (360 / this.orbitalPeriod) / util.referenceFPS  * util.animateSpeed * (this.avgDist / dist) * simulate_speed;
 
             if(this.parent)
-                angle += incAngle;
-            if(angle > 360){
-                angle -= 360;
+                angle -= incAngle;
+            if(angle < -360){
+                angle += 360;
             }
         }
         return new PIXI.Point(x, y);
@@ -166,6 +170,11 @@ class CelestialBody {
         this.orbitGraphic.scale.set(util.screenMag);
         this.orbitGraphic.angle = this.orbitRot;
     }
+
+    setPos(dateDiff){       //초기 위치로부터 주어진 날짜차이만큼의 위치 지정
+        if(this.orbitalPeriod != 0)
+            this.angle = this.initialAngle - (360 / this.orbitalPeriod) * dateDiff;
+    }
 }
 
 export function setup(stage){
@@ -188,7 +197,7 @@ export function addBody(options){
     orbitContainer.addChild(newBody.orbitGraphic);
     bodyContainer.addChild(newBody.sprite);
 
-    bm.addMenu(newBody);
+    bm.addBodyToMenu(newBody);
 
     return newBody;
 }
@@ -220,5 +229,16 @@ export function zoom(scale){
     for(let i = 0; i< bodies.length; i++){
         const item = bodies[i];
         item.drawOrbit();
+    }
+}
+
+export function adjustSimulateSpeed(speed){
+    simulate_speed = speed;
+}
+
+export function setPos(dateDiff){
+    for(let i = 0; i< bodies.length; i++){
+        const item = bodies[i];
+        item.setPos(dateDiff);
     }
 }

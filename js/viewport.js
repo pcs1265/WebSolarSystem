@@ -43,7 +43,7 @@ export function setup(app){
 
     viewport.clampZoom({
         minScale: 1,                 // minimum scale
-        maxScale: 100 * util.screenMagH,                 // maximum scale
+        maxScale: 1000 * util.screenMagH,                 // maximum scale
     })
 
 
@@ -172,8 +172,8 @@ export function modalup(){
             viewportHeightRatio = modalupViewportHeightRatio;
             modalAdjust();
         }, modalAnimationTime);
-        viewport.plugins.remove('wheel');
-        viewport.plugins.remove('pinch');
+        viewport.plugins.pause('wheel');
+        viewport.plugins.pause('pinch');
     }
     
 }
@@ -205,7 +205,10 @@ export function modaldown(){
             viewportHeightRatio = 1;
             modalAdjust();
         }, modalAnimationTime);
-        viewport.wheel().pinch();
+        viewport.plugins.resume('wheel');
+        viewport.plugins.resume('pinch');
+        
+        
     }
     
     

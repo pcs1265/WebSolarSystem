@@ -1,5 +1,6 @@
 * {
-    outline: 0;  
+    outline: 0; 
+    font-family: 'Noto Sans KR', sans-serif; 
 }
 
 html{
@@ -13,17 +14,11 @@ html{
 body {
     width: 100%;
     height: 100%;
-    background-color: #000000;
     margin: 0;
     padding: 0;
 
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    -ms-user-select:none;
     user-select:none;
     overflow: hidden;
-    
-    min-height: 100px;
 }
 
 #container {
@@ -38,93 +33,60 @@ body {
     width:100%;
     height:100%;
     position:absolute;
-    display:block;
     z-index: 1;
     touch-action: none;
 }
 
-#title{
+#top_bar{
     position: relative;
-    margin-top: 1%;
-    margin-left: 1%;
     z-index: 2;
-    float:left;
+    padding: 3vmin;
+    height: 5%;
+    pointer-events:none;
 
-    color: #FFFFFF;
-
-    font-family: 'Noto Sans';
-    font-size: x-large;
-    mix-blend-mode:difference;
-}
-
-#settings{
-    position: relative;
-    margin-top: 1%;
-    margin-right: 1%;
-    width: 15%;
-    min-width: 150px;
-    z-index: 2;
-    
-    float: right;
-
-    background-color: rgba(100,100,100, 0.7);
-    border-radius: 5px;
-    color: #FFFFFF;
-
-    font-family: 'Noto Sans';
-    backdrop-filter: blur(10px);
-
-    
-}
-
-#settings_panel{
-    margin-top: 5%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
-#body_list{
-    margin: 5% 0 5% 5%;
-    padding-left: 15%;
-    line-height: 200%;
-    font-size: large;
+#title{
+    font-size: 3vh;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+#options_button{
+    margin: 0;
+    height: 100%;
+    width: 20%;
+
+    line-height: 100%;
     
-    max-height: 20vh;
-    overflow-y: scroll;
+    font-size: 3vh;
+    font-weight: 300;
+    color: #FFFFFF;
+    background-color: rgba(100,100,100, 0.7);
+    backdrop-filter: blur(10px);
+    border: 0px;
+    border-radius: 5px;
+
+    pointer-events: all;
+    transition: all 0.1s;
+}
+#options_button:active{
+    background-color: rgba(50,50,50, 0.7);
 }
 
-.body_tree{
-    padding-left: 15%;
-}
-
-#control_title{
-    font-size:x-large;
-    text-align: center;
-}
-
-.option_title{
-    width: 90%;
-    margin-top: 5%;
-    font-size: large;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.particle_counter{
-    margin-top: 5%;
-    font-size: large;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.fps_counter{
-    margin-top: 5%;
-    margin-bottom: 5%;
-    font-size: large;
+#fps_counter{
+    color: #FFFFFF;
+    font-size: 2vh;
     text-align: center;
     vertical-align: middle;
+    
+    visibility: hidden;
+}
+#fps_counter.visible{
+    visibility: visible;
 }
 
 /* ~~~~~~스플래시 화면~~~~~~ */
@@ -138,7 +100,8 @@ body {
     width: 100%;
     height: 100%;
     z-index: 5;
-
+    pointer-events: none;
+    
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -146,23 +109,20 @@ body {
 
     opacity: 1;
     transition-duration: 1s;
-    transition-property: opacity;
-}
-
-#splash.fadeOut{
-    opacity: 0;
+    transition-property: opacity, visibility;
 }
 
 #splash.invisible{
-    display: none;
+    visibility: hidden;
+    opacity: 0;
 }
 
 #splash_text{
     color: #FFFFFF;
     
+    font-family: "Noto Sans KR" sans-serif;
     font-size: 7vmin;
-    font-family: 'Noto Sans';
-
+    font-weight:500;
     margin: 1%;
 
     transition-duration: 1s;
@@ -187,8 +147,157 @@ body {
     width: 0%;
     height: 100%;
     background-color: rgb(0, 128, 0);
+    
+    transition: width 0.2s linear;
 }
 
 #myProgress.move{
     width: 35vmin;
+    height: 3vmin;
+}
+
+
+/* ~~~~~~~~~~~~~~~~~~~~설정 화면~~~~~~~~~~~~~~~~~~~~ */
+
+#options{
+    background-color: rgba(50,50,50, 0.8);
+    backdrop-filter: blur(20px);
+    color: #FFFFFF;
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+
+    display: flex;
+    justify-content: center;
+
+    opacity: 0;
+    transition-duration: 0.5s;
+    transition-property: opacity, padding;
+    visibility: hidden;
+}
+#options.show{
+    visibility:visible;
+    opacity: 1;
+}
+
+#options_box{
+    width: 50%;
+    transition-duration: 1s;
+    transition-property: width;
+}
+
+#options_header {
+    height: fit-content;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 2vmin;
+}
+
+#options h1{
+    margin: 0;
+    font-size: 48px;
+    font-weight: 600;
+    transition: all 1s;
+}
+
+#options_close{
+    margin: 0;
+    height: 42px;
+    transition: all 1s;
+}
+
+#options_body {
+}
+
+.options_item{
+    background-color: rgba(70,70,70, 0.8);
+    width : 96%;
+    height: fit-content;
+    margin: 2vmin;
+
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+    text-align: center;
+
+    flex-wrap: wrap;
+    
+    font-size: 150%;
+
+    border-radius: 20px;
+
+    transition: all 1s;
+}
+
+.options_text{
+    width: 40%
+}
+
+.options_input{
+    width: 50%;
+    padding: 3%;
+}
+
+#options_date{
+    border: 0;
+    border-radius: 20px;
+    padding: 5%;
+    max-width: fit-content;
+    font-size: 1rem;
+}
+
+#options_date_set_button{
+    border: 0;
+    border-radius: 20px;
+    padding: 5%;
+    margin-top: 3%;
+    
+    font-size: 1rem;
+}
+
+#options_FPS_enable{
+    height: 3vh;
+}
+
+#options_simulate_speed{
+    width: 70%;
+    margin: 24px 0;
+}
+
+#options_footer {
+    text-align: center;
+}
+
+
+@media (max-width: 1000px) {
+	#options_box{  width: 90%; }
+    #options h1{
+        font-size: 36px;
+    }
+    #options_close{
+        height: 32px;
+    }
+    .options_item{  
+        font-size: 100%;
+    }
+}
+
+
+
+#body_list{
+    line-height: 200%;
+    font-size: large;
+    
+    max-height: 20vh;
+    overflow-y: scroll;
+}
+
+.body_tree{
+    padding-left: 15%;
 }

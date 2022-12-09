@@ -6,7 +6,12 @@
   <script src="./lib/pixi.min.js"></script>
   <script src="./lib/viewport.min.js"></script>
 
-  <style> @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap'); </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+  
+  
+
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="img/icon-80.png">
   <link rel="stylesheet" type="text/css" href="main.css">
@@ -28,7 +33,7 @@
   <div id="bottom_bar">
     <img id="prev_body_button" src="img/prev.png" class="bottom_arrow">
     <p id='bottom_bar_left_msg'></p>
-    <p id='bottom_bar_right_msg'>화살표를 이용해 <br> 이동할 수 있습니다.</p>
+    <p id='bottom_bar_right_msg'>태양</p>
     <img id="next_body_button" src="img/next.png" class="bottom_arrow">
   </div>
   <div id="modal">
@@ -62,7 +67,7 @@
         <div class="options_item">
           <p class="options_text">날짜 </p>
           <div class="options_input">
-            <input id="options_date" type="date" value="2022-11-25" min="2017-01-01" max="2027-12-31">
+            <input id="options_date" type="date" min="2017-01-01" max="2027-12-31">
             <button id="options_date_set_button">
               설정
             </button>
@@ -86,11 +91,10 @@
 
       </div>
       <div id="options_footer">
-        <p>초기 행성 배치 기준일 : 2022.11.25</p>
         <p>제작자 : 박찬수</p>
-        
         <p>e-mail : 1265pcs@gmail.com</p>
-        <p>마지막 수정일자 : 2022.12.08</p>
+        <p>마지막 수정일자 : 2022.12.10</p>
+        <p>주의 : 본 프로그램에서 제공하는 천체의 위치는 근사적인 위치이며 정확하지 않습니다.</p>
       </div>
     </div>
   </div>

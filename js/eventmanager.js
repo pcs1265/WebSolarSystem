@@ -1,8 +1,8 @@
 import * as vp from "./viewport.js"
 import * as cb from "./celestialbodies.js"
+import * as md from "./modal.js"
 
 let focusCooldown = false;
-let lastFocused = null;
 export function bodyClicked(body){
     if(!focusCooldown){
         if(body != vp.focused){
@@ -14,7 +14,6 @@ export function bodyClicked(body){
             setTimeout(()=>{
                 focusCooldown = false;
             }, 1000);
-            lastFocused = body;
         }else{
             resetPage();
             bottombarUnfocused(body);
@@ -34,14 +33,15 @@ export function bodyClicked(body){
 }
 
 async function fetchHtmlAsText(url) {
-    return await (await fetch(url)).text();
+    return (await fetch(url)).text();
 }
 
 async function importPage(target) {
+    document.getElementById('body_details').innerHTML = await fetchHtmlAsText('./bodyDocs/detail/' + target.nameEn + '.html');
     document.getElementById('modal_header').innerHTML = "<p id = 'bodyNameKor'>" + target.nameKor +"</p><p id = 'bodyNameEn'>" + target.nameEn + "</p><div id = 'show_details'> 상세정보 </div>";
     //document.getElementById('bodyNameKor').innerText = target.nameKor;
     //document.getElementById('bodyNameEn').innerText = target.nameEn;
-    document.getElementById('body_details').innerHTML = await fetchHtmlAsText('./bodyDocs/detail/' + target.nameEn + '.html');
+    
 }
 
 function resetPage(){
@@ -83,6 +83,7 @@ modalHeader.addEventListener('click', () => {
     }
 });
 
+//설정 버튼 이벤트
 
 let options_button = document.getElementById('options_button');
 let options = document.getElementById('options');
@@ -168,25 +169,17 @@ prev_body_button.classList.add('invisible');
 prev_body_button.addEventListener('click', () => {
     if(!focusCooldown){
         cb.focusPrevBody();
-        focusCooldown = true;
-        setTimeout(()=>{
-            focusCooldown = false;
-        }, 500);
     }
 });
 
 
 next_body_button.addEventListener('click', () => {
     if(!focusCooldown){
-        if(!vp.focused && lastFocused){
-            bodyClicked(lastFocused);
+        if(!vp.focused){
+            cb.focusSun();
         }else{
             cb.focusNextBody();
         }
-        focusCooldown = true;
-        setTimeout(()=>{
-            focusCooldown = false;
-        }, 500);
     }
 });
 
@@ -210,6 +203,6 @@ function bottombarFocused(body){
 function bottombarUnfocused(body){
     prev_body_button.classList.add('invisible');
     next_body_button.classList.remove('invisible');
-    document.getElementById('bottom_bar_right_msg').innerText = body.nameKor + "(으)로 이동";
+    document.getElementById('bottom_bar_right_msg').innerText = "태양";
     document.getElementById('bottom_bar_left_msg').innerText = "";
 }

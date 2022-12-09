@@ -82,9 +82,10 @@
     width: 70%;
     min-width:min-content;
     margin: 0 auto;
+    
+    word-break: keep-all;
 
-    transition-duration: 1s;
-    transition-property: width;
+    transition: all 1s;
 }
 
 @media (max-width: 1000px) {
@@ -102,11 +103,15 @@
     flex-grow: 1;
 }
 
-.inline_item{
-    
-    display: flex;
-    justify-content:center;
-    align-items: center;
+.image{
+    width: 50vh;
+    max-width: 100%;
+}
+
+.image_text{
+    flex-basis:auto;
+    width: 100%;
+    max-width: 100%;
 }
 
 .main_title {
@@ -118,7 +123,7 @@
     width: 100%;
 }
 
-table{
+#body_details table{
     border-collapse: collapse;
     text-align: center;
     line-height: 1.5;

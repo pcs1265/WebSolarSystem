@@ -79,7 +79,7 @@ export function setFocus(body){
 export function releaseFocus(){
     focused = undefined;
                                      
-    viewport.plugins.remove('animate');                                                                                                                                                                                                                                                                                                       
+    //viewport.plugins.remove('animate');                                                                                                                                                                                                                                                                                                       
     viewport.plugins.remove('follow');
 
     window.navigator.vibrate([1,75,3]);
@@ -173,6 +173,7 @@ export function modalup(){
             viewportHeightRatio = modalupViewportHeightRatio;
             modalAdjust();
         }, modalAnimationTime);
+        viewport.plugins.pause('clamp');
         viewport.plugins.pause('wheel');
         viewport.plugins.pause('pinch');
     }
@@ -206,6 +207,7 @@ export function modaldown(){
             viewportHeightRatio = 1;
             modalAdjust();
         }, modalAnimationTime);
+        viewport.plugins.resume('clamp');
         viewport.plugins.resume('wheel');
         viewport.plugins.resume('pinch');
         

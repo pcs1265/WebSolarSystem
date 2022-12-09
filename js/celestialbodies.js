@@ -1,5 +1,6 @@
 import * as util from "./util.js"
 import * as em from "./eventmanager.js"
+import * as md from "./modal.js"
 
 let bodies = [];
 let bodyContainer;
@@ -9,7 +10,7 @@ let orbitLineWidthRatio = 1;
 
 let simulate_speed = 1/86400;
 
-let focusedIndex = -1;
+let focusedIndex = 0;
 
 //orbitalPeriod는 일 단위
 class CelestialBody {
@@ -96,9 +97,6 @@ class CelestialBody {
     }
 
     nextPos(ms){
-        if(!this.parent){
-            return new PIXI.Point(this.x, this.y);
-        }
         let frames = ms / util.avgFrametime;
         let x;
         let y;
@@ -109,9 +107,16 @@ class CelestialBody {
             let centerY;
             let p = this.orbitRot * Math.PI / 180;
 
-            let parentCenter = this.parent.nextPos(util.avgFrametime * i);
-            centerX = parentCenter.x;
-            centerY = parentCenter.y;
+            if(!this.parent){
+                centerX = util.centerW;
+                centerY = util.centerH;
+            }else{
+                let parentCenter = this.parent.nextPos(util.avgFrametime * i);
+                centerX = parentCenter.x;
+                centerY = parentCenter.y;
+            }
+    
+            
 
             let rad = (angle) * Math.PI / 180;
             x = (this.a * Math.cos(rad) * Math.cos(p) - this.b * Math.sin(rad) * Math.sin(p) + this.focusX) * util.screenMag + centerX;
@@ -275,4 +280,9 @@ export function getPrevBody(body){
 }
 export function getNextBody(body){
     return bodies[bodies.indexOf(body) + 1];
+}
+
+export function focusSun(){
+    focusedIndex = 0;
+    em.bodyClicked(bodies[0]);
 }

@@ -18,7 +18,7 @@ const pixelPerParticle = 500;
 let totalParticles = 0;
 
 class Particle {
-    constructor(pos, texture){
+    constructor(pos){
         this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
         this.sprite.scale.set(this.scale *  particleScale);
         this.sprite.anchor.set(0.5);
@@ -90,12 +90,9 @@ export function resize(){
             totalParticles++;
         }
     }
-
-    //document.getElementById('particle_indicator').innerHTML = totalParticles;
-
-    
 }
 
+//화면의 줌에 따라 배경 파티클 크기 조절
 export function zoom(scale){    
     particleScale = 1 / (scale);
 }

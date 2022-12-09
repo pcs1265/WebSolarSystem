@@ -1,5 +1,5 @@
 
-import * as em from "./eventmanager.js"
+import * as em from "../js/eventmanager.js"
 
 let modal = document.getElementById('body_details');
 let menu = document.createElement('div');

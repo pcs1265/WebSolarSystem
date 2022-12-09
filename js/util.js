@@ -33,7 +33,8 @@ let frameCounter = 0;
 let lastFrame = Date.now();
 let frametimeCounter = 0;
 let fpsIndicator = document.getElementById("fps_indicator");
-let handleFPS = setInterval(showFPS.bind(this), 1000);
+
+setInterval(showFPS, 1000);
 
 export const referenceFPS = 75;
 export const referenceFrametime = 1000 / 75;
@@ -41,10 +42,20 @@ export const referenceFrametime = 1000 / 75;
 export let animateSpeed = 1;
 export let currentFPS = 0;
 export let avgFrametime = 0;
+
+const frameTimeSamples = 10;
+let currSamples = 0;
+
 export function frameCount(){
     frameCounter++;
-    frametimeCounter += Date.now() - lastFrame;
-    avgFrametime = frametimeCounter / frameCounter;
+    if(currSamples < frameTimeSamples){
+        frametimeCounter += Date.now() - lastFrame;
+        avgFrametime = frametimeCounter / (currSamples + 1);
+        currSamples++;
+    }else{
+        frametimeCounter += Date.now() - lastFrame - avgFrametime;
+        avgFrametime = frametimeCounter / frameTimeSamples;
+    }
     let prevAnimateSpeed = animateSpeed;
     animateSpeed = (avgFrametime / referenceFrametime);
     if(animateSpeed == NaN || animateSpeed == Infinity){
@@ -54,21 +65,17 @@ export function frameCount(){
 }
 
 function showFPS(){
-    fpsIndicator.innerHTML = frameCounter;
+    fpsIndicator.innerText = frameCounter;
     currentFPS = frameCounter;
-    frametimeCounter -= avgFrametime * frameCounter;
     frameCounter = 0;
 }
 
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === 'visible') {
-        clearInterval(handleFPS);
-        handleFPS = setInterval(showFPS.bind(this), 1000);
+        currSamples = 0;
+        frametimeCounter = 0;
         lastFrame = Date.now();
-        console.log('활성화');
     } else {
-        currentFPS = 0;
-        clearInterval(handleFPS);
-        console.log('비활성화');
+        frameCounter = 0;
     }
   });

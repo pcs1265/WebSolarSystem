@@ -38,6 +38,7 @@ async function fetchHtmlAsText(url) {
 
 async function importPage(target) {
     document.getElementById('body_details').innerHTML = await fetchHtmlAsText('./bodyDocs/detail/' + target.nameEn + '.html');
+    document.getElementById('modal_body').scrollTo(0,0);
     document.getElementById('modal_header').innerHTML = "<p id = 'bodyNameKor'>" + target.nameKor +"</p><p id = 'bodyNameEn'>" + target.nameEn + "</p><div id = 'show_details'> 상세정보 </div>";
     //document.getElementById('bodyNameKor').innerText = target.nameKor;
     //document.getElementById('bodyNameEn').innerText = target.nameEn;
@@ -71,10 +72,12 @@ modalHeader.addEventListener('click', () => {
     if(!modalCooldown){
         if(!modalEnabled && !modalLocked){
             modalup();
-            vp.modalup();
+            vp.modalup();    
+            window.navigator.vibrate(1);
         }else if(!modalLocked){
             modaldown();
             vp.modaldown();
+            window.navigator.vibrate(1);
         }
         modalCooldown = true;
         setTimeout(()=>{
@@ -89,11 +92,15 @@ let options_button = document.getElementById('options_button');
 let options = document.getElementById('options');
 options_button.addEventListener('click', () => {
     options.classList.add('show');
+    
+    window.navigator.vibrate(1);
 });
 
 let options_close_button = document.getElementById('options_close');
 options_close_button.addEventListener('click', () => {
     options.classList.remove('show');
+    
+    window.navigator.vibrate(1);
 });
 
 
@@ -103,6 +110,8 @@ let options_simulate_speed = document.getElementById('options_simulate_speed');
 
 options_simulate_speed.addEventListener('input', () => {
     let currSpeed = options_simulate_speed.value;
+    
+    window.navigator.vibrate(1);
     switch(currSpeed){
         case '0':
             document.getElementById('options_simulate_speed_indicator').innerText = '일시정지';
@@ -135,6 +144,10 @@ options_date_set_button.addEventListener('click', () => {
     if(input_date){
         pauseSimulation();
         cb.setPos((input_date - initialDate) / 1000 / 60 / 60 / 24);
+        options_date_set_button.innerText = '설정완료';
+        setTimeout(()=>{
+            options_date_set_button.innerText = '설정';
+        }, 1000);
     }else{
         alert('날짜가 설정되지 않았습니다.');
     }
@@ -153,12 +166,68 @@ let FPS_enabled_box = document.getElementById('options_FPS_enable');
 FPS_enabled_box.addEventListener('click', () => {
     if(!FPS_enabled){
         FPS_indicator.classList.add('visible');
-        FPS_enabled = !FPS_enabled;
+        FPS_enabled = true;
     }else{
         FPS_indicator.classList.remove('visible');
-        FPS_enabled = !FPS_enabled;
+        FPS_enabled = false;
     }
 });
+
+let fullscreen_enabled = false;
+
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    document.getElementById('fullscreen_option').remove();
+}else{
+    let fullscreen_enabled_box = document.getElementById('options_fullscreen_enable');
+    fullscreen_enabled_box.addEventListener('click', () => {
+        if(!document.fullscreenElement){
+            openFullScreenMode();
+            fullscreen_enabled = true;
+        }else{
+            closeFullScreenMode();
+            fullscreen_enabled = false;
+        }
+    
+        console.log(0);
+    });
+    window.onresize = function () {
+        if (!document.fullscreenElement) {
+            fullscreen_enabled_box.checked = false;
+        }else{
+            fullscreen_enabled_box.checked = true;
+        }
+    }    
+}
+
+
+
+let doc = document.body;
+function openFullScreenMode() {
+    if (doc.requestFullscreen)
+        doc.requestFullscreen();
+    else if (doc.webkitRequestFullscreen) // Chrome, Safari (webkit)
+        doc.webkitRequestFullscreen();
+    else if (doc.mozRequestFullScreen) // Firefox
+        doc.mozRequestFullScreen();
+    else if (doc.msRequestFullscreen) // IE or Edge
+        doc.msRequestFullscreen();
+}
+
+
+function closeFullScreenMode() {
+    if (document.exitFullscreen)
+        document.exitFullscreen();
+    else if (document.webkitExitFullscreen) // Chrome, Safari (webkit)
+        document.webkitExitFullscreen();
+    else if (document.mozCancelFullScreen) // Firefox
+        document.mozCancelFullScreen();
+    else if (document.msExitFullscreen) // IE or Edge
+        document.msExitFullscreen();
+    window.scrollTo(0, 0);
+    window.scrollTo(0, 1000);
+}
+
+
 
 // 바텀바 이벤트 핸들러
 

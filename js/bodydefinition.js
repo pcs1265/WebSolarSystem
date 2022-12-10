@@ -1,5 +1,32 @@
 import * as cb from "./celestialbodies.js"
 
+//행성 추가 - 항상 모천체부터 추가해야함.
+//모천체가 없는 천체는 화면의 가운데에 위치함.
+export function loadAllTextures(app){
+    app.loader.baseUrl = "img/bodies";
+    app.loader
+        .add("sun", "sun.png")
+        .add("mercury", "mercury.png")
+        .add("venus", "venus.png")
+        .add("earth", "earth.png")
+        .add("moon", "moon.png")
+        .add("mars", "mars.png")
+        .add("deimos", "deimos.png")
+        .add("phobos", "phobos.png")
+        .add("jupiter", "jupiter.png")
+        .add("io", "io.png")
+        .add("europa", "europa.png")
+        .add("ganymede", "ganymede.png")
+        .add("callisto", "callisto.png")
+        .add("saturn", "saturn.png")
+        .add("titan", "titan.png")
+        .add("uranus", "uranus.png")
+        .add("titania", "titania.png")
+        .add("neptune", "neptune.png")
+        .add("triton", "triton.png")
+        .add("pluto", "pluto.png");
+        app.loader.load();
+}
 
 export function addAllBodies(app){
     let sun = cb.addBody({
@@ -201,8 +228,8 @@ export function addAllBodies(app){
         nameEn: 'Saturn',
         parent: sun,
         texture: app.loader.resources.saturn.texture,
-        scale: 0.05,
-        focusScale: 2,
+        scale: 0.04,
+        focusScale: 3,
         initialAngle: 40,
     
         majorAxis: 955,
@@ -210,14 +237,29 @@ export function addAllBodies(app){
         eccentricity : 0.0167,
         orbitalPeriod : 10756,
     });
+
+    let titan = cb.addBody({
+        nameKor: '타이탄',
+        nameEn: 'Titan',
+        parent: saturn,
+        texture: app.loader.resources.titan.texture,
+        scale: 0.004,
+        focusScale: 25,
+        initialAngle: 30,
+    
+        majorAxis: 70,
+        orbitRot: 0,
+        eccentricity : 0.0288,
+        orbitalPeriod : 15.945,
+    });
     
     let uranus = cb.addBody({
         nameKor: '천왕성',
         nameEn: 'Uranus',
         parent: sun,
         texture: app.loader.resources.uranus.texture,
-        scale: 0.05,
-        focusScale: 2,
+        scale: 0.025,
+        focusScale: 4,
         initialAngle: 320,
     
         majorAxis: 1921.5,
@@ -225,20 +267,50 @@ export function addAllBodies(app){
         eccentricity : 0.046381,
         orbitalPeriod : 30688,
     });
+
+    let titania = cb.addBody({
+        nameKor: '티타니아',
+        nameEn: 'Titania',
+        parent: uranus,
+        texture: app.loader.resources.titania.texture,
+        scale: 0.004,
+        focusScale: 25,
+        initialAngle: 30,
+    
+        majorAxis: 50,
+        orbitRot: 0,
+        eccentricity : 0.00011,
+        orbitalPeriod : 8.706234,
+    });
     
     let neptune = cb.addBody({
         nameKor: '해왕성',
         nameEn: 'Neptune',
         parent: sun,
         texture: app.loader.resources.neptune.texture,
-        scale: 0.05,
-        focusScale: 2,
+        scale: 0.025,
+        focusScale: 4,
         initialAngle: 5,
     
         majorAxis: 3006.5,
         orbitRot: 0,
         eccentricity : 0.009456,
         orbitalPeriod : 60182,
+    });
+
+    let triton = cb.addBody({
+        nameKor: '트리톤',
+        nameEn: 'Triton',
+        parent: neptune,
+        texture: app.loader.resources.triton.texture,
+        scale: 0.004,
+        focusScale: 25,
+        initialAngle: 30,
+    
+        majorAxis: 50,
+        orbitRot: 0,
+        eccentricity : 0.000016,
+        orbitalPeriod : 5.876854,
     });
     
     let pluto = cb.addBody({

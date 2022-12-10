@@ -62,8 +62,6 @@ function placeParticles(){
         const item = new Particle({x : width, y : height}, texture);
         particles.push(item);
     }
-
-    //document.getElementById('particle_indicator').innerHTML = totalParticles;
 }
 
 

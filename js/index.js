@@ -20,41 +20,19 @@ let app = new PIXI.Application({
 app.view.id = 'stage'; 
 document.getElementById('container').appendChild(app.view);
 
-window.addEventListener('resize', resize.bind(this), false);
-app.renderer.plugins.interaction.autoPreventDefault = false;
+
 
 //메인 앱 시작
 let viewport = vp.setup(app);
 bg.setup(viewport);
 cb.setup(viewport);
 vp.setFocusGraphic();
-
-//행성 추가 - 항상 모천체부터 추가해야함.
-//모천체가 없는 천체는 화면의 가운데에 위치함.
-
-app.loader.baseUrl = "img/bodies";
-app.loader
-    .add("sun", "sun.png")
-    .add("mercury", "mercury.png")
-    .add("venus", "venus.png")
-    .add("earth", "earth.png")
-    .add("moon", "moon.png")
-    .add("mars", "mars.png")
-    .add("deimos", "deimos.png")
-    .add("phobos", "phobos.png")
-    .add("jupiter", "jupiter.png")
-    .add("io", "io.png")
-    .add("europa", "europa.png")
-    .add("ganymede", "ganymede.png")
-    .add("callisto", "callisto.png")
-    .add("saturn", "saturn.png")
-    .add("uranus", "uranus.png")
-    .add("neptune", "neptune.png")
-    .add("pluto", "pluto.png");
 app.loader.onProgress.add(showLoading);
 app.loader.onError.add(showError);
 app.loader.onComplete.add(loadDone);
-app.loader.load();
+bd.loadAllTextures(app);
+
+window.addEventListener('resize', resize);
 
 
 //애니메이션
@@ -95,7 +73,6 @@ function loadDone(){
     cb.setPos(dateDiff);
     document.getElementById('options_date').value = today.toISOString().slice(0, 10);
     
-    document.getElementById('body_details').innerHTML = "<h2 class='main_title'></h2><p class='whole_line_item'><p><table border='1' class='item'></table>";
 }
 
 function showLoading(e) {

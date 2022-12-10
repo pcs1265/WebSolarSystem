@@ -128,6 +128,7 @@ export function resize(){
     })
     if(focused){
         focusGraphic.scale.set(util.screenMag * focused.scale);
+        viewport.scaled = focused.focusScale;
     }else{
         viewport.moveCenter(prevCenterX * util.changeRatioW, prevCenterY * util.changeRatioH);
     }
@@ -169,10 +170,7 @@ export function modalup(){
                 viewport.follow(focused.sprite);
             },
         });
-        setTimeout(()=>{
-            viewportHeightRatio = modalupViewportHeightRatio;
-            modalAdjust();
-        }, modalAnimationTime);
+
         viewport.plugins.pause('clamp');
         viewport.plugins.pause('wheel');
         viewport.plugins.pause('pinch');
@@ -202,11 +200,6 @@ export function modaldown(){
             },
         });
 
-        
-        setTimeout(()=>{
-            viewportHeightRatio = 1;
-            modalAdjust();
-        }, modalAnimationTime);
         viewport.plugins.resume('clamp');
         viewport.plugins.resume('wheel');
         viewport.plugins.resume('pinch');

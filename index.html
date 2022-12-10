@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Expires" content="-1">
+  <meta property="og:image" content="img/meta.png">
+  
   <script src="./lib/pixi.min.js"></script>
   <script src="./lib/viewport.min.js"></script>
 
@@ -89,6 +90,11 @@
           <input class="options_input" id="options_FPS_enable" type="checkbox">
         </div>
 
+        <div class="options_item" id="fullscreen_option">
+          <p class="options_text">전체화면</p>
+          <input class="options_input" id="options_fullscreen_enable" type="checkbox">
+        </div>
+
       </div>
       <div id="options_footer">
         <p>제작자 : 박찬수</p>
@@ -99,15 +105,5 @@
     </div>
   </div>
 </body>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-      .register('./service_worker.js')
-      .then(function () {
-        console.log('서비스 워커가 등록됨!');
-      })
-  }
-</script>
 
 </html>

@@ -5,6 +5,9 @@ WSS(WebSolarSystem)
 
 Pixi.JS을 이용한 태양계 관찰 웹 앱 구현
 
+페이지 링크 : <https://pcs1265.github.io/WebSolarSystem/>
+
+
 태양계를 시각화한 모습을 볼 수 있다.
 
 페이지 진입시 현재 시간에 기반한 천체의 위치가 설정된다.

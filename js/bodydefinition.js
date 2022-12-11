@@ -3,7 +3,7 @@ import * as cb from "./celestialbodies.js"
 //행성 추가 - 항상 모천체부터 추가해야함.
 //모천체가 없는 천체는 화면의 가운데에 위치함.
 export function loadAllTextures(app){
-    app.loader.baseUrl = "img/bodies";
+    app.loader.baseUrl = "./img/bodies";
     app.loader
         .add("sun", "sun.png")
         .add("mercury", "mercury.png")

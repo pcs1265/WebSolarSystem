@@ -130,7 +130,7 @@ export function addAllBodies(app){
         majorAxis: 17,
         orbitRot: 0,
         eccentricity : 0.0,
-        orbitalPeriod : 0.3,
+        orbitalPeriod : 0.3188888,
     });
     
     let deimos = cb.addBody({
@@ -145,7 +145,7 @@ export function addAllBodies(app){
         majorAxis: 25,
         orbitRot: 0,
         eccentricity : 0.0,
-        orbitalPeriod : 1.2,
+        orbitalPeriod : 1.2624,
     });
     
     let jupiter = cb.addBody({
@@ -175,7 +175,7 @@ export function addAllBodies(app){
         majorAxis: 55,
         orbitRot: 0,
         eccentricity : 0.0,
-        orbitalPeriod : 1.76,
+        orbitalPeriod : 1.769137786,
     });
     
     let europa = cb.addBody({
@@ -190,7 +190,7 @@ export function addAllBodies(app){
         majorAxis: 65,
         orbitRot: 0,
         eccentricity : 0.0,
-        orbitalPeriod : 3.55,
+        orbitalPeriod : 3.55118,
     });
     
     let ganymede = cb.addBody({
@@ -205,7 +205,7 @@ export function addAllBodies(app){
         majorAxis: 75,
         orbitRot: 0,
         eccentricity : 0.0,
-        orbitalPeriod : 7.15,
+        orbitalPeriod : 7.15455296,
     });
     
     let callisto = cb.addBody({
@@ -220,7 +220,7 @@ export function addAllBodies(app){
         majorAxis: 85,
         orbitRot: 0,
         eccentricity : 0.0,
-        orbitalPeriod : 16.68,
+        orbitalPeriod : 16.6890184,
     });
     
     let saturn = cb.addBody({
@@ -234,8 +234,8 @@ export function addAllBodies(app){
     
         majorAxis: 955,
         orbitRot: 0,
-        eccentricity : 0.0167,
-        orbitalPeriod : 10756,
+        eccentricity : 0.05415060,
+        orbitalPeriod : 10756.1995,
     });
 
     let titan = cb.addBody({
@@ -265,7 +265,7 @@ export function addAllBodies(app){
         majorAxis: 1921.5,
         orbitRot: 0,
         eccentricity : 0.046381,
-        orbitalPeriod : 30688,
+        orbitalPeriod : 30707.4896,
     });
 
     let titania = cb.addBody({
@@ -295,7 +295,7 @@ export function addAllBodies(app){
         majorAxis: 3006.5,
         orbitRot: 0,
         eccentricity : 0.009456,
-        orbitalPeriod : 60182,
+        orbitalPeriod : 60223.3528,
     });
 
     let triton = cb.addBody({
@@ -310,7 +310,7 @@ export function addAllBodies(app){
         majorAxis: 50,
         orbitRot: 0,
         eccentricity : 0.000016,
-        orbitalPeriod : 5.876854,
+        orbitalPeriod : -5.876854,
     });
     
     let pluto = cb.addBody({

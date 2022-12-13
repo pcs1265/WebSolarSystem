@@ -204,6 +204,7 @@ export function addBody(options){
     let newBody = new CelestialBody(options);
 
     bodies.push(newBody);
+    md.loadDoc(newBody);
     orbitContainer.addChild(newBody.orbitGraphic);
     bodyContainer.addChild(newBody.sprite);
 

@@ -7,7 +7,7 @@ export function bodyClicked(body){
     if(!focusCooldown){
         if(body != vp.focused){
             vp.setFocus(body);
-            importPage(body);
+            md.importPage(body);
             bottombarFocused(body);
             modalLocked = false;
             focusCooldown = true;
@@ -15,7 +15,7 @@ export function bodyClicked(body){
                 focusCooldown = false;
             }, 1000);
         }else{
-            resetPage();
+            md.resetPage();
             bottombarUnfocused(body);
             if(modalEnabled){
                 modaldown();
@@ -30,24 +30,6 @@ export function bodyClicked(body){
         }
     }
     
-}
-
-async function fetchHtmlAsText(url) {
-    return (await fetch(url)).text();
-}
-
-async function importPage(target) {
-    document.getElementById('body_details').innerHTML = await fetchHtmlAsText('./bodyDocs/detail/' + target.nameEn + '.html');
-    document.getElementById('modal_body').scrollTo(0,0);
-    document.getElementById('modal_header').innerHTML = "<p id = 'bodyNameKor'>" + target.nameKor +"</p><p id = 'bodyNameEn'>" + target.nameEn + "</p><div id = 'show_details'> 상세정보 </div>";
-    //document.getElementById('bodyNameKor').innerText = target.nameKor;
-    //document.getElementById('bodyNameEn').innerText = target.nameEn;
-    
-}
-
-function resetPage(){
-    document.getElementById('modal_header').innerHTML = "<p class='init_message'> 정보를 보려면 천체를 선택하세요. </p>";
-    document.getElementById('body_details').innerHTML = "";
 }
 
 
